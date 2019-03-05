@@ -5,6 +5,8 @@ import {filmCardRender} from './make-film-card.js';
 const FILM_COUNT_MIN = 1;
 const FILM_COUNT_MAX = 7;
 const FILM_CARDS_COUNT = 7;
+const TOP_RATED_FILM_COUNT = 2;
+const MOST_COMMENTED_FILM_COUNT = 2;
 
 const filterClickHandler = (evt) => {
   evt.preventDefault();
@@ -41,14 +43,14 @@ filmsListContainerElement.insertAdjacentHTML(`beforeend`, tempFilmsListContainer
 
 const topRatedContainerElement = document.querySelector(`.films-list__container--top-rated`);
 let tempTopRatedContainer = ``;
-for (let i = 0; i < 2; i++) {
+for (let i = 0; i < TOP_RATED_FILM_COUNT; i++) {
   tempTopRatedContainer += filmCardRender(true);
 }
 topRatedContainerElement.insertAdjacentHTML(`beforeend`, tempTopRatedContainer);
 
 const mostCommentedContainerElement = document.querySelector(`.films-list__container--most-commented`);
 let tempMostCommentedContainer = ``;
-for (let i = 0; i < 2; i++) {
+for (let i = 0; i < MOST_COMMENTED_FILM_COUNT; i++) {
   tempMostCommentedContainer += filmCardRender(true);
 }
 mostCommentedContainerElement.insertAdjacentHTML(`beforeend`, tempMostCommentedContainer);
