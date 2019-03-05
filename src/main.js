@@ -9,16 +9,18 @@ const TOP_RATED_FILM_COUNT = 2;
 const MOST_COMMENTED_FILM_COUNT = 2;
 
 const filterClickHandler = (evt) => {
-  evt.preventDefault();
-  const filmCardElements = filmsListContainerElement.querySelectorAll(`.film-card `);
-  for (const element of filmCardElements) {
-    element.remove();
+  if (evt.target.matches(`.make-navigation__item--js`)) {
+    evt.preventDefault();
+    const filmCardElements = filmsListContainerElement.querySelectorAll(`.film-card `);
+    for (const element of filmCardElements) {
+      element.remove();
+    }
+    let tempFilmsListContainer = ``;
+    for (let i = 0; i < getRandomInt(FILM_COUNT_MIN, FILM_COUNT_MAX); i++) {
+      tempFilmsListContainer += filmCardRender();
+    }
+    filmsListContainerElement.insertAdjacentHTML(`beforeend`, tempFilmsListContainer);
   }
-  let tempFilmsListContainer = ``;
-  for (let i = 0; i < getRandomInt(FILM_COUNT_MIN, FILM_COUNT_MAX); i++) {
-    tempFilmsListContainer += filmCardRender();
-  }
-  filmsListContainerElement.insertAdjacentHTML(`beforeend`, tempFilmsListContainer);
 };
 
 const mainNavigationContainerElement = document.querySelector(`.main-navigation`);
@@ -28,11 +30,7 @@ tempFilterContainer += filterRender(`Watchlist`, getRandomInt(FILM_COUNT_MIN, FI
 tempFilterContainer += filterRender(`History`, getRandomInt(FILM_COUNT_MIN, FILM_COUNT_MAX));
 tempFilterContainer += filterRender(`Favorites`, getRandomInt(FILM_COUNT_MIN, FILM_COUNT_MAX));
 mainNavigationContainerElement.insertAdjacentHTML(`afterbegin`, tempFilterContainer);
-
-const filterElements = mainNavigationContainerElement.querySelectorAll(`.make-navigation__item--js`);
-for (const element of filterElements) {
-  element.addEventListener(`click`, filterClickHandler);
-}
+mainNavigationContainerElement.addEventListener(`click`, filterClickHandler);
 
 const filmsListContainerElement = document.querySelector(`.films-list .films-list__container`);
 let tempFilmsListContainer = ``;
