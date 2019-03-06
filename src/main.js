@@ -1,6 +1,7 @@
 import {filterRender} from './make-filter.js';
 import {getRandomInt} from './util.js';
 import {filmCardRender} from './make-film-card.js';
+import {filmCard} from './data.js';
 
 const FILM_COUNT_MIN = 1;
 const FILM_COUNT_MAX = 7;
