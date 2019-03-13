@@ -16,6 +16,8 @@ export default class FilmCard {
     this._cardControls = cardControls;
 
     this._element = null;
+    this._commentsClickBinder = null;
+    this._filmDetailsElement = null;
   }
 
   get template() {
@@ -41,13 +43,31 @@ export default class FilmCard {
     </article>`.trim();
   }
 
-  bind() {
+  set filmDetailsElement(element) {
+    this._filmDetailsElement = element;
+  }
 
+  _onCommentsClick() {
+    document.body.appendChild(this._filmDetailsElement);
+  }
+
+  bind() {
+    this._commentsClickBinder = this._onCommentsClick.bind(this);
+    this._element.querySelector(`.film-card__comments`).addEventListener(`click`, this._commentsClickBinder);
+  }
+
+  unbind() {
+    this._element.querySelector(`.film-card__comments`).removeEventListener(`click`, this._commentsClickBinder);
   }
 
   render() {
     this._element = createElement(this.template);
     this.bind();
     return this._element;
+  }
+
+  unrender() {
+    this.unbind();
+    this._element = null;
   }
 }

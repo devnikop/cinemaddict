@@ -16,6 +16,7 @@ export default class FilmDetails {
     this._cardControls = cardControls;
 
     this._element = null;
+    this._closeButtonClickBinder = null;
   }
 
   get tempate() {
@@ -185,11 +186,20 @@ export default class FilmDetails {
         </section>
       </form>
     </section>
-    `;
+    `.trim();
+  }
+
+  _onCloseButtonClick() {
+    this._element.remove();
   }
 
   bind() {
+    this._closeButtonClickBinder = this._onCloseButtonClick.bind(this);
+    this._element.querySelector(`.film-details__close-btn`).addEventListener(`click`, this._closeButtonClickBinder);
+  }
 
+  unbind() {
+    this._element.querySelector(`.film-details__close-btn`).removeEventListener(`click`, this._closeButtonClickBinder);
   }
 
   render() {

@@ -2,6 +2,7 @@ import {renderFilter} from './make-filter.js';
 import {getRandomInt} from './util.js';
 import {filmCard as filmCardData} from './data.js';
 import FilmCard from './film-card.js';
+import FilmDetails from './film-details.js';
 
 const FILM_COUNT_MIN = 1;
 const FILM_COUNT_MAX = 7;
@@ -9,10 +10,17 @@ const FILM_CARDS_COUNT = 7;
 const TOP_RATED_FILM_COUNT = 2;
 const MOST_COMMENTED_FILM_COUNT = 2;
 
+const createPopup = (film) => {
+  const filmDetails = new FilmDetails(filmCardData);
+  const filmDetailsElement = filmDetails.render();
+  film.filmDetailsElement = filmDetailsElement;
+};
+
 const createFilmCardList = () => {
   let filmCardList = [];
   for (let i = 0; i < FILM_CARDS_COUNT; i++) {
     const film = new FilmCard(filmCardData);
+    createPopup(film);
     filmCardList[i] = film.render();
   }
   return filmCardList;
@@ -22,6 +30,7 @@ const createTopRatedFilmList = () => {
   let topRatedFilmList = [];
   for (let i = 0; i < TOP_RATED_FILM_COUNT; i++) {
     const film = new FilmCard(filmCardData, true);
+    createPopup(film);
     topRatedFilmList[i] = film.render();
   }
   return topRatedFilmList;
@@ -31,6 +40,7 @@ const createMostCommentedFilmList = () => {
   let mostCommentedFilmList = [];
   for (let i = 0; i < MOST_COMMENTED_FILM_COUNT; i++) {
     const film = new FilmCard(filmCardData, true);
+    createPopup(film);
     mostCommentedFilmList[i] = film.render();
   }
   return mostCommentedFilmList;
