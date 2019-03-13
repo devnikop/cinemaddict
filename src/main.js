@@ -1,7 +1,7 @@
 import {renderFilter} from './make-filter.js';
 import {getRandomInt} from './util.js';
-import {renderFilmCard} from './make-film-card.js';
-import {filmCard} from './data.js';
+import {filmCard as filmCardData} from './data.js';
+import FilmCard from './film-card.js';
 
 const FILM_COUNT_MIN = 1;
 const FILM_COUNT_MAX = 7;
@@ -12,7 +12,8 @@ const MOST_COMMENTED_FILM_COUNT = 2;
 const createFilmCardList = () => {
   let filmCardList = [];
   for (let i = 0; i < FILM_CARDS_COUNT; i++) {
-    filmCardList[i] = renderFilmCard(filmCard);
+    const film = new FilmCard(filmCardData);
+    filmCardList[i] = film.render();
   }
   return filmCardList;
 };
@@ -20,7 +21,8 @@ const createFilmCardList = () => {
 const createTopRatedFilmList = () => {
   let topRatedFilmList = [];
   for (let i = 0; i < TOP_RATED_FILM_COUNT; i++) {
-    topRatedFilmList[i] = renderFilmCard(filmCard, true);
+    const film = new FilmCard(filmCardData, true);
+    topRatedFilmList[i] = film.render();
   }
   return topRatedFilmList;
 };
@@ -28,7 +30,8 @@ const createTopRatedFilmList = () => {
 const createMostCommentedFilmList = () => {
   let mostCommentedFilmList = [];
   for (let i = 0; i < MOST_COMMENTED_FILM_COUNT; i++) {
-    mostCommentedFilmList[i] = renderFilmCard(filmCard, true);
+    const film = new FilmCard(filmCardData, true);
+    mostCommentedFilmList[i] = film.render();
   }
   return mostCommentedFilmList;
 };
@@ -40,11 +43,11 @@ const filterClickHandler = (evt) => {
     for (const element of filmCardElements) {
       element.remove();
     }
-    let tempFilmsListContainer = ``;
+    const fragment = document.createDocumentFragment();
     for (let i = 0; i < getRandomInt(FILM_COUNT_MIN, FILM_COUNT_MAX); i++) {
-      tempFilmsListContainer += filmCardList[i];
+      fragment.appendChild(filmCardList[i]);
     }
-    filmsListContainerElement.insertAdjacentHTML(`beforeend`, tempFilmsListContainer);
+    filmsListContainerElement.appendChild(fragment);
   }
 };
 
@@ -67,8 +70,22 @@ const filmsListContainerElement = document.querySelector(`.films-list .films-lis
 const topRatedContainerElement = document.querySelector(`.films-list__container--top-rated`);
 const mostCommentedContainerElement = document.querySelector(`.films-list__container--most-commented`);
 
-filmsListContainerElement.insertAdjacentHTML(`beforeend`, filmCardList.join(``));
-topRatedContainerElement.insertAdjacentHTML(`beforeend`, topRatedFilmList.join(``));
-mostCommentedContainerElement.insertAdjacentHTML(`beforeend`, mostCommentedFilmList.join(``));
+const filmCardListFragment = document.createDocumentFragment();
+for (const film of filmCardList) {
+  filmCardListFragment.appendChild(film);
+}
+filmsListContainerElement.appendChild(filmCardListFragment);
+
+const topRatedFragment = document.createDocumentFragment();
+for (const film of topRatedFilmList) {
+  topRatedFragment.appendChild(film);
+}
+topRatedContainerElement.appendChild(topRatedFragment);
+
+const mostCommentedFragment = document.createDocumentFragment();
+for (const film of mostCommentedFilmList) {
+  mostCommentedFragment.appendChild(film);
+}
+mostCommentedContainerElement.appendChild(mostCommentedFragment);
 
 renderFilterList();
