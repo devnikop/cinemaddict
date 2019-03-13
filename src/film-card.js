@@ -17,7 +17,8 @@ export default class FilmCard {
 
     this._element = null;
     this._commentsClickBinder = null;
-    this._filmDetailsElement = null;
+
+    this._onComments = null;
   }
 
   get template() {
@@ -43,12 +44,12 @@ export default class FilmCard {
     </article>`.trim();
   }
 
-  set filmDetailsElement(element) {
-    this._filmDetailsElement = element;
+  _onCommentsClick() {
+    return typeof this._onComments === `function` && this._onComments();
   }
 
-  _onCommentsClick() {
-    document.body.appendChild(this._filmDetailsElement);
+  set onClick(fn) {
+    this._onComments = fn;
   }
 
   bind() {

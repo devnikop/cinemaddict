@@ -11,9 +11,14 @@ const TOP_RATED_FILM_COUNT = 2;
 const MOST_COMMENTED_FILM_COUNT = 2;
 
 const createPopup = (film) => {
-  const filmDetails = new FilmDetails(filmCardData);
-  const filmDetailsElement = filmDetails.render();
-  film.filmDetailsElement = filmDetailsElement;
+  film.onClick = () => {
+    const filmDetails = new FilmDetails(filmCardData);
+    const filmDetailsElement = filmDetails.render();
+    document.body.appendChild(filmDetailsElement);
+    filmDetails.onCloseClick = () => {
+      filmDetailsElement.remove();
+    };
+  };
 };
 
 const createFilmCardList = () => {
