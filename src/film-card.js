@@ -28,7 +28,7 @@ export default class FilmCard {
       <p class="film-card__rating">${this._rating}</p>
       <p class="film-card__info">
         <span class="film-card__year">${this._year}</span>
-        <span class="film-card__duration">${this._duration}</span>
+        <span class="film-card__duration">${this._minutesToHour()}</span>
         <span class="film-card__genre">${this._genre}</span>
       </p>
       <img src="${this._poster}" alt="" class="film-card__poster">
@@ -42,6 +42,12 @@ export default class FilmCard {
           <button class="film-card__controls-item button film-card__controls-item--favorite"><!--Mark as favorite-->FAV</button>
         </form>`}
     </article>`.trim();
+  }
+
+  _minutesToHour() {
+    const hours = Math.trunc(this._duration / 60);
+    const minutes = this._duration % 60;
+    return `${hours}h ${minutes}`;
   }
 
   _onCommentsClick() {

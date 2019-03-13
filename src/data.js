@@ -20,7 +20,7 @@ export const filmCard = {
   ][Math.floor(Math.random() * 15)],
   rating: getRandomInt(1, 10),
   year: getRandomInt(1950, 2020),
-  duration: `${getRandomInt(1, 3)}h ${getRandomInt(0, 59)}`,
+  duration: `${getRandomInt(60, 300)}`,
   genre: [
     `Action`,
     `Adventure`,

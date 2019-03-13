@@ -29,7 +29,7 @@ export default class FilmDetails {
         </div>
         <div class="film-details__info-wrap">
           <div class="film-details__poster">
-            <img class="film-details__poster-img" src="images/posters/blackmail.jpg" alt="incredables-2">
+            <img class="film-details__poster-img" src="${this._poster}" alt="incredables-2">
 
             <p class="film-details__age">18+</p>
           </div>
@@ -37,12 +37,12 @@ export default class FilmDetails {
           <div class="film-details__info">
             <div class="film-details__info-head">
               <div class="film-details__title-wrap">
-                <h3 class="film-details__title">Incredibles 2</h3>
+                <h3 class="film-details__title">${this._title}</h3>
                 <p class="film-details__title-original">Original: Невероятная семейка</p>
               </div>
 
               <div class="film-details__rating">
-                <p class="film-details__total-rating">5.2</p>
+                <p class="film-details__total-rating">${this._rating}</p>
                 <p class="film-details__user-rating">Your rate 8</p>
               </div>
             </div>
@@ -62,11 +62,11 @@ export default class FilmDetails {
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Release Date</td>
-                <td class="film-details__cell">15 June 2018 (USA)</td>
+                <td class="film-details__cell">15 June ${this._year} (USA)</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Runtime</td>
-                <td class="film-details__cell">118 min</td>
+                <td class="film-details__cell">${this._duration} min</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Country</td>
@@ -75,16 +75,13 @@ export default class FilmDetails {
               <tr class="film-details__row">
                 <td class="film-details__term">Genres</td>
                 <td class="film-details__cell">
-                  <span class="film-details__genre">Animation</span>
-                  <span class="film-details__genre">Action</span>
-                  <span class="film-details__genre">Adventure</span></td>
+                  <span class="film-details__genre">${this._genre}</span>
+                  <span class="film-details__genre">${this._genre}</span>
+                  <span class="film-details__genre">${this._genre}</span></td>
               </tr>
             </table>
 
-            <p class="film-details__film-description">
-              The Incredibles hero family takes on a new mission, which involves a change in family roles:
-              Bob Parr (Mr Incredible) must manage the house while his wife Helen (Elastigirl) goes out to save the world.
-            </p>
+            <p class="film-details__film-description">${this._description}</p>
           </div>
         </div>
 
@@ -100,7 +97,7 @@ export default class FilmDetails {
         </section>
 
         <section class="film-details__comments-wrap">
-          <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">1</span></h3>
+          <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${this._commentsCount}</span></h3>
 
           <ul class="film-details__comments-list">
             <li class="film-details__comment">
