@@ -18,7 +18,7 @@ export default class FilmCard {
     this._cardControls = notHasCardControls;
 
     this._element = null;
-    this._commentsClickBinder = null;
+    this._commentsClickBinder = this._onCommentsClick.bind(this);
 
     this._onComments = null;
   }
@@ -61,7 +61,6 @@ export default class FilmCard {
   }
 
   bind() {
-    this._commentsClickBinder = this._onCommentsClick.bind(this);
     this._element.querySelector(`.film-card__comments`).addEventListener(`click`, this._commentsClickBinder);
   }
 

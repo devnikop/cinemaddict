@@ -16,7 +16,7 @@ export default class FilmDetails {
     this._cardControls = cardControls;
 
     this._element = null;
-    this._closeButtonClickBinder = null;
+    this._closeButtonClickBinder = this._onCloseButtonClick.bind(this);
     this._onCloseButton = null;
   }
 
@@ -196,7 +196,6 @@ export default class FilmDetails {
   }
 
   bind() {
-    this._closeButtonClickBinder = this._onCloseButtonClick.bind(this);
     this._element.querySelector(`.film-details__close-btn`).addEventListener(`click`, this._closeButtonClickBinder);
   }
 

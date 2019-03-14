@@ -1,8 +1,6 @@
 import {renderFilter} from './make-filter.js';
 import {getRandomInt} from './util.js';
-import {filmCard as filmCardData} from './data.js';
-import FilmCard from './film-card.js';
-import FilmDetails from './film-details.js';
+import {createFilmCardList} from './create-film-cards.js';
 
 const FILM_COUNT_MIN = 1;
 const FILM_COUNT_MAX = 7;
@@ -10,31 +8,10 @@ const FILM_CARDS_COUNT = 7;
 const TOP_RATED_FILM_COUNT = 2;
 const MOST_COMMENTED_FILM_COUNT = 2;
 
-const createPopup = (film) => {
-  film.onClick = () => {
-    const filmDetails = new FilmDetails(filmCardData);
-    const filmDetailsElement = filmDetails.render();
-    document.body.appendChild(filmDetailsElement);
-    filmDetails.onCloseClick = () => {
-      filmDetailsElement.remove();
-    };
-  };
-};
-
-const createFilmCardList = (filmCardCount, notHasCardControls = false) => {
-  let filmCardList = [];
-  for (let i = 0; i < filmCardCount; i++) {
-    const film = new FilmCard(filmCardData, notHasCardControls);
-    createPopup(film);
-    filmCardList[i] = film.render();
-  }
-  return filmCardList;
-};
-
-const addInContainer = (filmList, container) => {
+const addNodeListInContainer = (nodeList, container) => {
   const fragment = document.createDocumentFragment();
-  for (const film of filmList) {
-    fragment.appendChild(film);
+  for (const node of nodeList) {
+    fragment.appendChild(node);
   }
   container.appendChild(fragment);
 };
@@ -73,8 +50,8 @@ const filmsListContainerElement = document.querySelector(`.films-list .films-lis
 const topRatedContainerElement = document.querySelector(`.films-list__container--top-rated`);
 const mostCommentedContainerElement = document.querySelector(`.films-list__container--most-commented`);
 
-addInContainer(filmCardNodeList, filmsListContainerElement);
-addInContainer(topRatedFilmList, topRatedContainerElement);
-addInContainer(mostCommentedFilmList, mostCommentedContainerElement);
+addNodeListInContainer(filmCardNodeList, filmsListContainerElement);
+addNodeListInContainer(topRatedFilmList, topRatedContainerElement);
+addNodeListInContainer(mostCommentedFilmList, mostCommentedContainerElement);
 
 renderFilterList();
