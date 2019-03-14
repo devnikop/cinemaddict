@@ -21,34 +21,22 @@ const createPopup = (film) => {
   };
 };
 
-const createFilmCardList = () => {
+const createFilmCardList = (filmCardCount, notHasCardControls = false) => {
   let filmCardList = [];
-  for (let i = 0; i < FILM_CARDS_COUNT; i++) {
-    const film = new FilmCard(filmCardData);
+  for (let i = 0; i < filmCardCount; i++) {
+    const film = new FilmCard(filmCardData, notHasCardControls);
     createPopup(film);
     filmCardList[i] = film.render();
   }
   return filmCardList;
 };
 
-const createTopRatedFilmList = () => {
-  let topRatedFilmList = [];
-  for (let i = 0; i < TOP_RATED_FILM_COUNT; i++) {
-    const film = new FilmCard(filmCardData, true);
-    createPopup(film);
-    topRatedFilmList[i] = film.render();
+const addInContainer = (filmList, container) => {
+  const fragment = document.createDocumentFragment();
+  for (const film of filmList) {
+    fragment.appendChild(film);
   }
-  return topRatedFilmList;
-};
-
-const createMostCommentedFilmList = () => {
-  let mostCommentedFilmList = [];
-  for (let i = 0; i < MOST_COMMENTED_FILM_COUNT; i++) {
-    const film = new FilmCard(filmCardData, true);
-    createPopup(film);
-    mostCommentedFilmList[i] = film.render();
-  }
-  return mostCommentedFilmList;
+  container.appendChild(fragment);
 };
 
 const filterClickHandler = (evt) => {
@@ -60,7 +48,7 @@ const filterClickHandler = (evt) => {
     }
     const fragment = document.createDocumentFragment();
     for (let i = 0; i < getRandomInt(FILM_COUNT_MIN, FILM_COUNT_MAX); i++) {
-      fragment.appendChild(filmCardList[i]);
+      fragment.appendChild(filmCardNodeList[i]);
     }
     filmsListContainerElement.appendChild(fragment);
   }
@@ -77,30 +65,16 @@ const renderFilterList = () => {
   mainNavigationContainerElement.addEventListener(`click`, filterClickHandler);
 };
 
-const filmCardList = createFilmCardList();
-const topRatedFilmList = createTopRatedFilmList();
-const mostCommentedFilmList = createMostCommentedFilmList();
+const filmCardNodeList = createFilmCardList(FILM_CARDS_COUNT);
+const topRatedFilmList = createFilmCardList(TOP_RATED_FILM_COUNT, true);
+const mostCommentedFilmList = createFilmCardList(MOST_COMMENTED_FILM_COUNT, true);
 
 const filmsListContainerElement = document.querySelector(`.films-list .films-list__container`);
 const topRatedContainerElement = document.querySelector(`.films-list__container--top-rated`);
 const mostCommentedContainerElement = document.querySelector(`.films-list__container--most-commented`);
 
-const filmCardListFragment = document.createDocumentFragment();
-for (const film of filmCardList) {
-  filmCardListFragment.appendChild(film);
-}
-filmsListContainerElement.appendChild(filmCardListFragment);
-
-const topRatedFragment = document.createDocumentFragment();
-for (const film of topRatedFilmList) {
-  topRatedFragment.appendChild(film);
-}
-topRatedContainerElement.appendChild(topRatedFragment);
-
-const mostCommentedFragment = document.createDocumentFragment();
-for (const film of mostCommentedFilmList) {
-  mostCommentedFragment.appendChild(film);
-}
-mostCommentedContainerElement.appendChild(mostCommentedFragment);
+addInContainer(filmCardNodeList, filmsListContainerElement);
+addInContainer(topRatedFilmList, topRatedContainerElement);
+addInContainer(mostCommentedFilmList, mostCommentedContainerElement);
 
 renderFilterList();

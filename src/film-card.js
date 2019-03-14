@@ -3,7 +3,7 @@ import {createElement} from './util.js';
 const MINUTES_IN_HOUR = 60;
 
 export default class FilmCard {
-  constructor(film, cardControls = false) {
+  constructor(film, notHasCardControls = false) {
     this._title = film.title;
     this._rating = film.rating;
     this._year = film.year;
@@ -15,7 +15,7 @@ export default class FilmCard {
     this._isOnWatchlist = film.isOnWatchlist;
     this._isWatched = film.isWatched;
     this._isFavorite = film.isFavorite;
-    this._cardControls = cardControls;
+    this._cardControls = notHasCardControls;
 
     this._element = null;
     this._commentsClickBinder = null;
