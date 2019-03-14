@@ -1,4 +1,6 @@
 import {createElement} from './util.js';
+import FilmDetails from './film-details.js';
+import {filmCard as filmCardData} from './data.js';
 
 const MINUTES_IN_HOUR = 60;
 
@@ -19,8 +21,6 @@ export default class FilmCard {
 
     this._element = null;
     this._commentsClickBinder = this._onCommentsClick.bind(this);
-
-    this._onComments = null;
   }
 
   get template() {
@@ -53,11 +53,8 @@ export default class FilmCard {
   }
 
   _onCommentsClick() {
-    return typeof this._onComments === `function` && this._onComments();
-  }
-
-  set onClick(fn) {
-    this._onComments = fn;
+    const filmDetails = new FilmDetails(filmCardData);
+    document.body.appendChild(filmDetails.render());
   }
 
   bind() {
