@@ -1,5 +1,7 @@
 import {createElement} from './util.js';
 
+const MINUTES_IN_HOUR = 60;
+
 export default class FilmCard {
   constructor(film, cardControls = false) {
     this._title = film.title;
@@ -45,8 +47,8 @@ export default class FilmCard {
   }
 
   _minutesToHour() {
-    const hours = Math.trunc(this._duration / 60);
-    const minutes = this._duration % 60;
+    const hours = Math.trunc(this._duration / MINUTES_IN_HOUR);
+    const minutes = this._duration % MINUTES_IN_HOUR;
     return `${hours}h ${minutes}`;
   }
 
