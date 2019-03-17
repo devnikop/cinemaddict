@@ -18,6 +18,7 @@ export default class FilmDetails {
     this._element = null;
     this._closeButton = null;
     this._onCloseButtonClick = this._onCloseButtonClick.bind(this);
+    this._onCloseButton = null;
   }
 
   get tempate() {
@@ -187,8 +188,13 @@ export default class FilmDetails {
     `.trim();
   }
 
-  _onCloseButtonClick() {
-    this.unrender();
+  set onCloseButtonClick(fn) {
+    this._onCloseButton = fn;
+  }
+
+  _onCloseButtonClick(evt) {
+    evt.preventDefault();
+    return typeof this._onCloseButton === `function` && this._onCloseButton();
   }
 
   bind() {
