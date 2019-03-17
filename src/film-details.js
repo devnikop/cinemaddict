@@ -16,7 +16,8 @@ export default class FilmDetails {
     this._cardControls = cardControls;
 
     this._element = null;
-    this._closeButtonClickBinder = this._onCloseButtonClick.bind(this);
+    this._closeButton = null;
+    this._onCloseButtonClick = this._onCloseButtonClick.bind(this);
   }
 
   get tempate() {
@@ -187,15 +188,16 @@ export default class FilmDetails {
   }
 
   _onCloseButtonClick() {
-    this._element.remove();
+    this.unrender();
   }
 
   bind() {
-    this._element.querySelector(`.film-details__close-btn`).addEventListener(`click`, this._closeButtonClickBinder);
+    this._closeButton = this._element.querySelector(`.film-details__close-btn`);
+    this._closeButton.addEventListener(`click`, this._onCloseButtonClick);
   }
 
   unbind() {
-    this._element.querySelector(`.film-details__close-btn`).removeEventListener(`click`, this._closeButtonClickBinder);
+    this._closeButton.removeEventListener(`click`, this._onCloseButtonClick);
   }
 
   render() {
@@ -206,6 +208,7 @@ export default class FilmDetails {
 
   unrender() {
     this.unbind();
+    this._element.remove();
     this._element = null;
   }
 }

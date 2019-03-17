@@ -5,7 +5,7 @@ import {filmCard as filmCardData} from './data.js';
 const MINUTES_IN_HOUR = 60;
 
 export default class FilmCard {
-  constructor(film, notHasCardControls = false) {
+  constructor(film, hasControls = false) {
     this._title = film.title;
     this._rating = film.rating;
     this._year = film.year;
@@ -17,15 +17,16 @@ export default class FilmCard {
     this._isOnWatchlist = film.isOnWatchlist;
     this._isWatched = film.isWatched;
     this._isFavorite = film.isFavorite;
-    this._cardControls = notHasCardControls;
+    this._hasControls = hasControls;
 
     this._element = null;
-    this._commentsClickBinder = this._onCommentsClick.bind(this);
+    this._commentsButton = null;
+    this._onCommentsClick = this._onCommentsClick.bind(this);
   }
 
   get template() {
     return `
-    <article class="film-card ${this._cardControls ? `film-card--no-controls` : ``}">
+    <article class="film-card ${this._hasControls ? `film-card--no-controls` : ``}">
       <h3 class="film-card__title">${this._title}</h3>
       <p class="film-card__rating">${this._rating}</p>
       <p class="film-card__info">
@@ -37,7 +38,7 @@ export default class FilmCard {
       <p class="film-card__description">${this._description}</p>
       <button class="film-card__comments">${this._commentsCount} comments</button>
 
-      ${this._cardControls ? `` : `
+      ${this._hasControls ? `` : `
         <form class="film-card__controls">
           <button class="film-card__controls-item button film-card__controls-item--add-to-watchlist"><!--Add to watchlist--> WL</button>
           <button class="film-card__controls-item button film-card__controls-item--mark-as-watched"><!--Mark as watched-->WTCHD</button>
@@ -58,11 +59,12 @@ export default class FilmCard {
   }
 
   bind() {
-    this._element.querySelector(`.film-card__comments`).addEventListener(`click`, this._commentsClickBinder);
+    this._commentsButton = this._element.querySelector(`.film-card__comments`);
+    this._commentsButton.addEventListener(`click`, this._onCommentsClick);
   }
 
   unbind() {
-    this._element.querySelector(`.film-card__comments`).removeEventListener(`click`, this._commentsClickBinder);
+    this._commentsButton.removeEventListener(`click`, this._onCommentsClick);
   }
 
   render() {
@@ -73,6 +75,7 @@ export default class FilmCard {
 
   unrender() {
     this.unbind();
+    this._element.remove();
     this._element = null;
   }
 }
