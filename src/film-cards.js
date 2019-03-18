@@ -2,7 +2,7 @@ import {filmCard as filmCardData} from './data.js';
 import FilmCard from './film-card.js';
 import FilmDetails from './film-details.js';
 
-export default class Films {
+export default class FilmCards {
   _detailsCloseHandler(filmDetails) {
     filmDetails.onCloseButtonClick = () => {
       filmDetails.unrender();
