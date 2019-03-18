@@ -1,5 +1,20 @@
 import {getRandomInt} from './util.js';
 
+const FilmCardMap = new Map([
+  [`TITLE_COUNT`, 15],
+  [`RATING_MIN`, 1],
+  [`RATING_MAX`, 10],
+  [`YEAR_MIN`, 1950],
+  [`YEAR_MAX`, 2020],
+  [`DURATION_MIN`, 60],
+  [`DURATION_MAX`, 300],
+  [`GENRE_COUNT`, 12],
+  [`DESCRIPTION_COUNT`, 11],
+  [`COMMENTS_MIN`, 0],
+  [`COMMENTS_MAX`, 20],
+]);
+
+
 export const filmCard = {
   title: [
     `Avengers: Infinity War`,
@@ -17,10 +32,10 @@ export const filmCard = {
     `The Hobbit: The Battle of the Five Armies`,
     `Batman v Superman: Dawn of Justice`,
     `Man of Steel`,
-  ][Math.floor(Math.random() * 15)],
-  rating: getRandomInt(1, 10),
-  year: getRandomInt(1950, 2020),
-  duration: `${getRandomInt(1, 3)}h ${getRandomInt(0, 59)}`,
+  ][Math.floor(Math.random() * FilmCardMap.get(`TITLE_COUNT`))],
+  rating: getRandomInt(FilmCardMap.get(`RATING_MIN`), FilmCardMap.get(`RATING_MAX`)),
+  year: getRandomInt(FilmCardMap.get(`YEAR_MIN`), FilmCardMap.get(`YEAR_MAX`)),
+  duration: `${getRandomInt(FilmCardMap.get(`DURATION_MIN`), FilmCardMap.get(`DURATION_MAX`))}`,
   genre: [
     `Action`,
     `Adventure`,
@@ -35,7 +50,7 @@ export const filmCard = {
     `Sci-Fi`,
     `Sport`,
     `Thriller`
-  ][Math.floor(Math.random() * 12)],
+  ][Math.floor(Math.random() * FilmCardMap.get(`GENRE_COUNT`))],
   poster: `images/posters/blackmail.jpg`,
   description: [
     `Lorem ipsum dolor sit amet, consectetur adipiscing elit.`,
@@ -49,8 +64,8 @@ export const filmCard = {
     `Aliquam erat volutpat.`,
     `Nunc fermentum tortor ac porta dapibus.`,
     `In rutrum ac purus sit amet tempus.`,
-  ][Math.floor(Math.random() * 11)],
-  commentsCount: `${getRandomInt(0, 20)}`,
+  ][Math.floor(Math.random() * FilmCardMap.get(`DESCRIPTION_COUNT`))],
+  commentsCount: `${getRandomInt(FilmCardMap.get(`COMMENTS_MIN`), FilmCardMap.get(`COMMENTS_MAX`))}`,
   isOnWatchlist: false,
   isWatched: true,
   isFavorite: false,
