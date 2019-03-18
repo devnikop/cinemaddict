@@ -4,7 +4,7 @@ import {getRandomInt} from './util.js';
 const FILM_COUNT_MIN = 1;
 const FILM_COUNT_MAX = 7;
 
-export default class CreateFilters {
+export default class Filters {
   _filterClickHandler(filmsListContainerElement, filmCardNodeList, evt) {
     if (evt.target.matches(`.make-navigation__item--js`)) {
       evt.preventDefault();
