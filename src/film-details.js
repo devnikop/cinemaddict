@@ -1,27 +1,16 @@
-import {createElement} from './util.js';
+import Component from './component.js';
 
-export default class FilmDetails {
-  constructor(film, cardControls = false) {
-    this._title = film.title;
-    this._rating = film.rating;
-    this._year = film.year;
-    this._duration = film.duration;
-    this._genre = film.genre;
-    this._poster = film.poster;
-    this._description = film.description;
-    this._commentsCount = film.commentsCount;
-    this._isOnWatchlist = film.isOnWatchlist;
-    this._isWatched = film.isWatched;
-    this._isFavorite = film.isFavorite;
-    this._cardControls = cardControls;
+export default class FilmDetails extends Component {
+  constructor(film, hasControls = false) {
+    super(film);
+    this._cardControls = hasControls;
 
-    this._element = null;
     this._closeButton = null;
     this._onCloseButtonClick = this._onCloseButtonClick.bind(this);
     this._onCloseButton = null;
   }
 
-  get tempate() {
+  get template() {
     return `
     <section class="film-details">
       <form class="film-details__inner" action="" method="get">
@@ -204,17 +193,5 @@ export default class FilmDetails {
 
   unbind() {
     this._closeButton.removeEventListener(`click`, this._onCloseButtonClick);
-  }
-
-  render() {
-    this._element = createElement(this.tempate);
-    this.bind();
-    return this._element;
-  }
-
-  unrender() {
-    this.unbind();
-    this._element.remove();
-    this._element = null;
   }
 }

@@ -1,23 +1,12 @@
-import {createElement} from './util.js';
+import Component from './component.js';
 
 const MINUTES_IN_HOUR = 60;
 
-export default class FilmCard {
+export default class FilmCard extends Component {
   constructor(film, hasControls = false) {
-    this._title = film.title;
-    this._rating = film.rating;
-    this._year = film.year;
-    this._duration = film.duration;
-    this._genre = film.genre;
-    this._poster = film.poster;
-    this._description = film.description;
-    this._commentsCount = film.commentsCount;
-    this._isOnWatchlist = film.isOnWatchlist;
-    this._isWatched = film.isWatched;
-    this._isFavorite = film.isFavorite;
+    super(film);
     this._hasControls = hasControls;
 
-    this._element = null;
     this._commentsButton = null;
     this._onCommentsClick = this._onCommentsClick.bind(this);
     this._onComments = null;
@@ -68,17 +57,5 @@ export default class FilmCard {
 
   unbind() {
     this._commentsButton.removeEventListener(`click`, this._onCommentsClick);
-  }
-
-  render() {
-    this._element = createElement(this.template);
-    this.bind();
-    return this._element;
-  }
-
-  unrender() {
-    this.unbind();
-    this._element.remove();
-    this._element = null;
   }
 }
