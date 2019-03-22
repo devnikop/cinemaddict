@@ -1,4 +1,4 @@
-import {createElement} from './util.js';
+import {createElement} from './util';
 
 export default class Component {
   constructor(film) {
@@ -7,9 +7,10 @@ export default class Component {
     }
 
     this._title = film.title;
+    this._titleOriginal = film.titleOriginal;
     this._rating = film.rating;
-    this._year = film.year;
-    this._duration = film.duration;
+    this._premiereDate = film.premiereDate;
+    this._duration = +film.duration;
     this._genre = film.genre;
     this._poster = film.poster;
     this._description = film.description;

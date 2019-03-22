@@ -1,5 +1,5 @@
-import FilmCards from './film-cards.js';
-import Filters from './filters.js';
+import FilmCards from './film-cards';
+import Filters from './filters';
 
 const FILM_CARDS_COUNT = 7;
 const TOP_RATED_FILM_COUNT = 2;

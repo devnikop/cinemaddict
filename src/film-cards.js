@@ -1,6 +1,6 @@
-import {filmCard as filmCardData} from './data.js';
-import FilmCard from './film-card.js';
-import FilmDetails from './film-details.js';
+import {filmCard as filmCardData} from './data';
+import FilmCard from './film-card';
+import FilmDetails from './film-details';
 
 export default class FilmCards {
   _detailsCloseHandler(filmDetails) {

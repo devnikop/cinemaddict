@@ -1,11 +1,11 @@
-import {getRandomInt} from './util.js';
+import {getRandomInt} from './util';
+import moment from '../node_modules/moment';
 
 const FilmCardMap = new Map([
   [`TITLE_COUNT`, 15],
+  [`ORIGINAL_TITLE_COUNT`, 3],
   [`RATING_MIN`, 1],
   [`RATING_MAX`, 10],
-  [`YEAR_MIN`, 1950],
-  [`YEAR_MAX`, 2020],
   [`DURATION_MIN`, 60],
   [`DURATION_MAX`, 300],
   [`GENRE_COUNT`, 12],
@@ -33,9 +33,14 @@ export const filmCard = {
     `Batman v Superman: Dawn of Justice`,
     `Man of Steel`,
   ][Math.floor(Math.random() * FilmCardMap.get(`TITLE_COUNT`))],
+  titleOriginal: [
+    `Originaltitle`,
+    `Originaltitle2`,
+    `Originaltitle3`,
+  ][Math.floor(Math.random() * FilmCardMap.get(`ORIGINAL_TITLE_COUNT`))],
   rating: getRandomInt(FilmCardMap.get(`RATING_MIN`), FilmCardMap.get(`RATING_MAX`)),
-  year: getRandomInt(FilmCardMap.get(`YEAR_MIN`), FilmCardMap.get(`YEAR_MAX`)),
-  duration: `${getRandomInt(FilmCardMap.get(`DURATION_MIN`), FilmCardMap.get(`DURATION_MAX`))}`,
+  premiereDate: moment(`2015-05-14`).format(`YYYY-MM-DD`),
+  duration: `${moment.duration(getRandomInt(FilmCardMap.get(`DURATION_MIN`), FilmCardMap.get(`DURATION_MAX`)), `m`).asMinutes()}`,
   genre: [
     `Action`,
     `Adventure`,

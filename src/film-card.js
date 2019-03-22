@@ -1,6 +1,5 @@
-import Component from './component.js';
-
-const MINUTES_IN_HOUR = 60;
+import Component from './component';
+import moment from '../node_modules/moment';
 
 export default class FilmCard extends Component {
   constructor(film, hasControls = false) {
@@ -18,8 +17,8 @@ export default class FilmCard extends Component {
       <h3 class="film-card__title">${this._title}</h3>
       <p class="film-card__rating">${this._rating}</p>
       <p class="film-card__info">
-        <span class="film-card__year">${this._year}</span>
-        <span class="film-card__duration">${this._minutesToHour()}</span>
+        <span class="film-card__year">${moment(this._premiereDate).format(`YYYY`)}</span>
+        <span class="film-card__duration">${moment.duration(this._duration, `m`).hours()}h ${moment.duration(this._duration, `m`).minutes()}</span>
         <span class="film-card__genre">${this._genre}</span>
       </p>
       <img src="${this._poster}" alt="" class="film-card__poster">
@@ -33,12 +32,6 @@ export default class FilmCard extends Component {
           <button class="film-card__controls-item button film-card__controls-item--favorite"><!--Mark as favorite-->FAV</button>
         </form>`}
     </article>`.trim();
-  }
-
-  _minutesToHour() {
-    const hours = Math.trunc(this._duration / MINUTES_IN_HOUR);
-    const minutes = this._duration % MINUTES_IN_HOUR;
-    return `${hours}h ${minutes}`;
   }
 
   set onCommentsClick(fn) {

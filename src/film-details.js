@@ -1,4 +1,5 @@
-import Component from './component.js';
+import Component from './component';
+import moment from '../node_modules/moment';
 
 export default class FilmDetails extends Component {
   constructor(film, hasControls = false) {
@@ -28,7 +29,7 @@ export default class FilmDetails extends Component {
             <div class="film-details__info-head">
               <div class="film-details__title-wrap">
                 <h3 class="film-details__title">${this._title}</h3>
-                <p class="film-details__title-original">Original: Невероятная семейка</p>
+                <p class="film-details__title-original">Original: ${this._titleOriginal}</p>
               </div>
 
               <div class="film-details__rating">
@@ -52,11 +53,11 @@ export default class FilmDetails extends Component {
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Release Date</td>
-                <td class="film-details__cell">15 June ${this._year} (USA)</td>
+                <td class="film-details__cell">${moment(this._premiereDate).format(`DD MMMM YYYY`)} (USA)</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Runtime</td>
-                <td class="film-details__cell">${this._duration} min</td>
+                <td class="film-details__cell">${moment.duration(this._duration, `minutes`).asMinutes()} min</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Country</td>
