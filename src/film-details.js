@@ -15,8 +15,16 @@ export default class FilmDetails extends Component {
     this._cardControls = hasControls;
 
     this._closeButton = null;
+    this._commentElement = null;
+    this._userRatingContainerElement = null;
+
     this._onCloseButtonClick = this._onCloseButtonClick.bind(this);
+    this._onCommentEnter = this._onCommentEnter.bind(this);
+    this._onUserRatingClick = this._onUserRatingClick.bind(this);
+
     this._onCloseButton = null;
+    this._onComment = null;
+    this.onUserRating = null;
   }
 
   get template() {
@@ -74,7 +82,9 @@ export default class FilmDetails extends Component {
               <tr class="film-details__row">
                 <td class="film-details__term">Genres</td>
                 <td class="film-details__cell">
-                  ${this._genre.slice(0, GENRE_COUNT).map((currentGenre) => `<span class="film-details__genre">${currentGenre}</span>`).join(``)}
+                  ${this._genre.slice(0, GENRE_COUNT).map((currentGenre) => `
+                    <span class="film-details__genre">${currentGenre}</span>
+                  `).join(``)}
                 </td>
               </tr>
             </table>
@@ -98,16 +108,18 @@ export default class FilmDetails extends Component {
           <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${this._commentsCount}</span></h3>
 
           <ul class="film-details__comments-list">
-            <li class="film-details__comment">
-              <span class="film-details__comment-emoji">😴</span>
-              <div>
-                <p class="film-details__comment-text">So long-long story, boring!</p>
-                <p class="film-details__comment-info">
-                  <span class="film-details__comment-author">Tim Macoveev</span>
-                  <span class="film-details__comment-day">3 days ago</span>
-                </p>
-              </div>
-            </li>
+            ${this._comments.map((currentComment) => `
+              <li class="film-details__comment">
+                <span class="film-details__comment-emoji">😴</span>
+                <div>
+                  <p class="film-details__comment-text">${currentComment.text}</p>
+                  <p class="film-details__comment-info">
+                    <span class="film-details__comment-author">${currentComment.author}</span>
+                    <span class="film-details__comment-day">${moment(currentComment.date, `YYYY-MM-DD`).fromNow()}</span>
+                  </p>
+                </div>
+              </li>
+            `).join(``)}
           </ul>
 
           <div class="film-details__new-comment">
@@ -149,33 +161,11 @@ export default class FilmDetails extends Component {
               <p class="film-details__user-rating-feelings">How you feel it?</p>
 
               <div class="film-details__user-rating-score">
-                <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="1" id="rating-1">
-                <label class="film-details__user-rating-label" for="rating-1">1</label>
-
-                <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="2" id="rating-2">
-                <label class="film-details__user-rating-label" for="rating-2">2</label>
-
-                <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="3" id="rating-3">
-                <label class="film-details__user-rating-label" for="rating-3">3</label>
-
-                <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="4" id="rating-4">
-                <label class="film-details__user-rating-label" for="rating-4">4</label>
-
-                <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="5" id="rating-5" checked>
-                <label class="film-details__user-rating-label" for="rating-5">5</label>
-
-                <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="6" id="rating-6">
-                <label class="film-details__user-rating-label" for="rating-6">6</label>
-
-                <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="7" id="rating-7">
-                <label class="film-details__user-rating-label" for="rating-7">7</label>
-
-                <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="8" id="rating-8">
-                <label class="film-details__user-rating-label" for="rating-8">8</label>
-
-                <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="9" id="rating-9">
-                <label class="film-details__user-rating-label" for="rating-9">9</label>
-
+                ${Array(9).fill().map((item, i) => `
+                  <input type="radio" name="score" class="film-details__user-rating-input visually-hidden"
+                    value="${i + 1}" id="rating-${i + 1}">
+                  <label class="film-details__user-rating-label" for="rating-${i + 1}">${i + 1}</label>
+                `).join(``)}
               </div>
             </section>
           </div>
@@ -189,17 +179,78 @@ export default class FilmDetails extends Component {
     this._onCloseButton = fn;
   }
 
+  set onCommentEnter(fn) {
+    this._onComment = fn;
+  }
+
+  set onUserRatingClick(fn) {
+    this.onUserRating = fn;
+  }
+
   _onCloseButtonClick(evt) {
     evt.preventDefault();
     return typeof this._onCloseButton === `function` && this._onCloseButton();
   }
 
+  _onCommentEnter(evt) {
+    if (evt.key === `Enter`) {
+      evt.preventDefault();
+      const newData = this._dataUpdate();
+      // eslint-disable-next-line no-unused-expressions
+      typeof this._onComment === `function` && this._onComment(newData);
+    }
+  }
+
+  _onUserRatingClick(evt) {
+    if (evt.target.matches(`film-details__user-rating-input`)) {
+      evt.preventDefault();
+      // eslint-disable-next-line no-unused-expressions
+      typeof this.onUserRating === `function` && this.onUserRating();
+    }
+  }
+
+  _processForm(newComment) {
+    const entry = {
+      text: [],
+      author: ``,
+      date: new Date(),
+    };
+
+    entry.text = newComment.text;
+    entry.author = newComment.author;
+    entry.date = newComment.date;
+    return entry;
+  }
+
+  _dataUpdate() {
+    const comment = {
+      text: this._element.querySelector(`.film-details__comment-input`).value,
+      author: `new author`,
+      date: moment().format(`YYYY-MM-DD`),
+    };
+    const newData = this._processForm(comment);
+    this.update(newData);
+    return newData;
+  }
+
   bind() {
     this._closeButton = this._element.querySelector(`.film-details__close-btn`);
+    this._commentElement = this._element.querySelector(`.film-details__comment-input`);
+    this._userRatingContainerElement = this._element.querySelector(`.film-details__user-rating-score`);
+
     this._closeButton.addEventListener(`click`, this._onCloseButtonClick);
+    this._commentElement.addEventListener(`keydown`, this._onCommentEnter);
+    this._userRatingContainerElement.addEventListener(`click`, this._onUserRatingClick);
   }
 
   unbind() {
     this._closeButton.removeEventListener(`click`, this._onCloseButtonClick);
+    this._commentElement.removeEventListener(`keydown`, this._onCommentEnter);
+    this._userRatingContainerElement.removeEventListener(`click`, this._onUserRatingClick);
+  }
+
+  update(newData) {
+    this._comments.push(newData);
+    this._commentsCount = this._comments.length;
   }
 }

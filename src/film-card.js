@@ -90,4 +90,8 @@ export default class FilmCard extends Component {
       this._markAsFavorite.removeEventListener(`click`, this._onFavoriteClick);
     }
   }
+
+  update() {
+    this._commentsCount = this._comments.length;
+  }
 }

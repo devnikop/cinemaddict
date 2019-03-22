@@ -3,9 +3,19 @@ import FilmCard from './film-card';
 import FilmDetails from './film-details';
 
 export default class FilmCards {
-  _detailsCloseHandler(filmDetails) {
+  _bindHandlers(filmDetails, film) {
     filmDetails.onCloseButtonClick = () => {
       filmDetails.unrender();
+    };
+    filmDetails.onCommentEnter = (newData) => {
+      const currentFilmDetails = filmDetails.element;
+      document.body.replaceChild(filmDetails.render(), currentFilmDetails);
+      film.update(newData);
+      const currentFilmCard = film.element;
+      document.querySelector(`.films-list__container`).replaceChild(film.render(), currentFilmCard);
+    };
+    filmDetails.onUserRatingClick = () => {
+
     };
   }
 
@@ -13,7 +23,7 @@ export default class FilmCards {
     film.onCommentsClick = () => {
       const filmDetails = new FilmDetails(filmCardData);
       const filmDetailsNode = filmDetails.render();
-      this._detailsCloseHandler(filmDetails);
+      this._bindHandlers(filmDetails, film);
       document.body.appendChild(filmDetailsNode);
     };
   }

@@ -14,7 +14,9 @@ export default class Component {
     this._genre = film.genre;
     this._poster = film.poster;
     this._description = film.description;
-    this._commentsCount = film.commentsCount;
+    this._comments = film.comments;
+    this._commentsCount = film.comments.length;
+
 
     this._state = {
       _isOnWatchlist: film.isOnWatchlist,
@@ -27,6 +29,10 @@ export default class Component {
 
   get template() {
     throw new Error(`You have to define template.`);
+  }
+
+  get element() {
+    return this._element;
   }
 
   bind() {}
@@ -44,4 +50,6 @@ export default class Component {
     this._element.remove();
     this._element = null;
   }
+
+  update() {}
 }

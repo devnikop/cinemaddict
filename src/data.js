@@ -80,7 +80,22 @@ export const filmCard = {
     `Nunc fermentum tortor ac porta dapibus.`,
     `In rutrum ac purus sit amet tempus.`,
   ][Math.floor(Math.random() * FilmCardMap.get(`DESCRIPTION_COUNT`))],
-  commentsCount: `${getRandomInt(FilmCardMap.get(`COMMENTS_MIN`), FilmCardMap.get(`COMMENTS_MAX`))}`,
+  comments: [
+    {
+      text: `Lorem ipsum dolor sit amet, consectetur adipiscing elit.`,
+      author: `Tim Macoveev`,
+      date: moment(`2019-03-18`).format(`YYYY-MM-DD`)
+    },
+    {
+      text: `LCras aliquet varius magna, non porta ligula feugiat eget.`,
+      author: `Nikolay`,
+      date: moment(`2019-03-21`).format(`YYYY-MM-DD`)
+    },
+  ],
+  // comments: [
+  //   `Lorem ipsum dolor sit amet, consectetur adipiscing elit.`,
+  //   `Cras aliquet varius magna, non porta ligula feugiat eget.`,
+  // ],
   isOnWatchlist: false,
   isWatched: true,
   isFavorite: false,
