@@ -18,10 +18,10 @@ export default class FilmCards {
     };
   }
 
-  render(filmCardCount, hasControls = false) {
+  render(filmCardCount, controls = true) {
     const filmCardList = [];
     for (let i = 0; i < filmCardCount; i++) {
-      const film = new FilmCard(filmCardData, hasControls);
+      const film = new FilmCard(filmCardData, controls);
       filmCardList.push(film.render());
       this._bindDetails(film);
     }

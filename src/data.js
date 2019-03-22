@@ -38,7 +38,16 @@ export const filmCard = {
     `Originaltitle2`,
     `Originaltitle3`,
   ][Math.floor(Math.random() * FilmCardMap.get(`ORIGINAL_TITLE_COUNT`))],
-  rating: getRandomInt(FilmCardMap.get(`RATING_MIN`), FilmCardMap.get(`RATING_MAX`)),
+  averageRating: getRandomInt(FilmCardMap.get(`RATING_MIN`), FilmCardMap.get(`RATING_MAX`)),
+  userRating: getRandomInt(FilmCardMap.get(`RATING_MIN`), FilmCardMap.get(`RATING_MAX`)),
+  country: `USA`,
+  actorCast: [
+    `Samuel L. Jackson`,
+    `Catherine Keener`,
+    `Sophia Bush`,
+    `Somebody`,
+    `Something`
+  ],
   premiereDate: moment(`2015-05-14`).format(`YYYY-MM-DD`),
   duration: `${moment.duration(getRandomInt(FilmCardMap.get(`DURATION_MIN`), FilmCardMap.get(`DURATION_MAX`)), `m`).asMinutes()}`,
   genre: [
@@ -55,7 +64,8 @@ export const filmCard = {
     `Sci-Fi`,
     `Sport`,
     `Thriller`
-  ][Math.floor(Math.random() * FilmCardMap.get(`GENRE_COUNT`))],
+  ],
+  ageLimit: 18,
   poster: `images/posters/blackmail.jpg`,
   description: [
     `Lorem ipsum dolor sit amet, consectetur adipiscing elit.`,

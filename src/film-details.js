@@ -1,9 +1,17 @@
 import Component from './component';
 import moment from '../node_modules/moment';
 
+const ACTOR_COUNT = 3;
+const GENRE_COUNT = 3;
+
 export default class FilmDetails extends Component {
   constructor(film, hasControls = false) {
     super(film);
+    this._ageLimit = film.ageLimit;
+    this._userRating = film.userRating;
+    this._country = film.country;
+    this._actorCast = film.actorCast;
+
     this._cardControls = hasControls;
 
     this._closeButton = null;
@@ -22,7 +30,7 @@ export default class FilmDetails extends Component {
           <div class="film-details__poster">
             <img class="film-details__poster-img" src="${this._poster}" alt="incredables-2">
 
-            <p class="film-details__age">18+</p>
+            <p class="film-details__age">${this._ageLimit}+</p>
           </div>
 
           <div class="film-details__info">
@@ -33,8 +41,8 @@ export default class FilmDetails extends Component {
               </div>
 
               <div class="film-details__rating">
-                <p class="film-details__total-rating">${this._rating}</p>
-                <p class="film-details__user-rating">Your rate 8</p>
+                <p class="film-details__total-rating">${this._averageRating}</p>
+                <p class="film-details__user-rating">Your rate ${this._userRating}</p>
               </div>
             </div>
 
@@ -49,7 +57,7 @@ export default class FilmDetails extends Component {
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Actors</td>
-                <td class="film-details__cell">Samuel L. Jackson, Catherine Keener, Sophia Bush</td>
+                <td class="film-details__cell">${this._actorCast.slice(0, ACTOR_COUNT).join(`, `)}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Release Date</td>
@@ -61,14 +69,13 @@ export default class FilmDetails extends Component {
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Country</td>
-                <td class="film-details__cell">USA</td>
+                <td class="film-details__cell">${this._country}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Genres</td>
                 <td class="film-details__cell">
-                  <span class="film-details__genre">${this._genre}</span>
-                  <span class="film-details__genre">${this._genre}</span>
-                  <span class="film-details__genre">${this._genre}</span></td>
+                  ${this._genre.slice(0, GENRE_COUNT).map((currentGenre) => `<span class="film-details__genre">${currentGenre}</span>`).join(``)}
+                </td>
               </tr>
             </table>
 
@@ -77,14 +84,14 @@ export default class FilmDetails extends Component {
         </div>
 
         <section class="film-details__controls">
-          <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist">
-          <label for="watchlist" class="film-details__control-label film-details__control-label--watchlist">Add to watchlist</label>
+          <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist" ${this._state._isOnWatchlist ? `checked` : ``}>
+          <label for="watchlist" class="film-details__control-label film-details__control-label--watchlist">${this._state._isOnWatchlist ? `Already in watchlist` : `Add to watchlist`}</label>
 
-          <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched" checked>
-          <label for="watched" class="film-details__control-label film-details__control-label--watched">Already watched</label>
+          <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched" ${this._state._isWatched ? `checked` : ``}>
+          <label for="watched" class="film-details__control-label film-details__control-label--watched">${this._state._isWatched ? `Already watched` : `Mark as watched`}</label>
 
-          <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite">
-          <label for="favorite" class="film-details__control-label film-details__control-label--favorite">Add to favorites</label>
+          <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite" ${this._state._isFavorite ? `checked` : ``}>
+          <label for="favorite" class="film-details__control-label film-details__control-label--favorite">${this._state._isFavorite ? `Favorite` : `Add to favorites`}</label>
         </section>
 
         <section class="film-details__comments-wrap">
@@ -137,7 +144,7 @@ export default class FilmDetails extends Component {
             </div>
 
             <section class="film-details__user-rating-inner">
-              <h3 class="film-details__user-rating-title">Incredibles 2</h3>
+              <h3 class="film-details__user-rating-title">${this._title}</h3>
 
               <p class="film-details__user-rating-feelings">How you feel it?</p>
 

@@ -15,8 +15,8 @@ const addNodeListInContainer = (nodeList, container) => {
 
 const filmsCards = new FilmCards();
 const filmCardNodeList = filmsCards.render(FILM_CARDS_COUNT);
-const topRatedFilmList = filmsCards.render(TOP_RATED_FILM_COUNT, true);
-const mostCommentedFilmList = filmsCards.render(MOST_COMMENTED_FILM_COUNT, true);
+const topRatedFilmList = filmsCards.render(TOP_RATED_FILM_COUNT, false);
+const mostCommentedFilmList = filmsCards.render(MOST_COMMENTED_FILM_COUNT, false);
 
 const filmsCommonContainerElement = document.querySelector(`.films`);
 const filmsListContainerElement = filmsCommonContainerElement.querySelector(`.films-list .films-list__container`);
