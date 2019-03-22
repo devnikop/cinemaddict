@@ -14,8 +14,10 @@ export default class FilmCards {
       const currentFilmCard = film.element;
       document.querySelector(`.films-list__container`).replaceChild(film.render(), currentFilmCard);
     };
-    filmDetails.onUserRatingClick = () => {
-
+    filmDetails.onUserRatingClick = (newData) => {
+      filmCardData.userRating = newData.userRating;
+      const currentFilmDetails = filmDetails.element;
+      document.body.replaceChild(filmDetails.render(), currentFilmDetails);
     };
   }
 

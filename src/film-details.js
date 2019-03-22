@@ -163,7 +163,7 @@ export default class FilmDetails extends Component {
               <div class="film-details__user-rating-score">
                 ${Array(9).fill().map((item, i) => `
                   <input type="radio" name="score" class="film-details__user-rating-input visually-hidden"
-                    value="${i + 1}" id="rating-${i + 1}">
+                    value="${i + 1}" id="rating-${i + 1}" ${+this._userRating === i + 1 ? `checked` : ``}>
                   <label class="film-details__user-rating-label" for="rating-${i + 1}">${i + 1}</label>
                 `).join(``)}
               </div>
@@ -187,6 +187,34 @@ export default class FilmDetails extends Component {
     this.onUserRating = fn;
   }
 
+  _processForm(newData) {
+    const entry = {
+      text: [],
+      author: ``,
+      date: new Date(),
+      userRating: ``,
+    };
+
+    entry.text = newData.text;
+    entry.author = newData.author;
+    entry.date = newData.date;
+    entry.userRating = newData.userRating;
+    return entry;
+  }
+
+  _dataUpdate() {
+    const data = {
+      text: this._element.querySelector(`.film-details__comment-input`).value,
+      author: `new author`,
+      date: moment().format(`YYYY-MM-DD`),
+      // userRating: this.element.querySelector(`.film-details__user-rating-input:hover`).value,
+      userRating: this.element.querySelector(`.film-details__user-rating-input:checked`).value,
+    };
+    const newData = this._processForm(data);
+    this.update(newData);
+    return newData;
+  }
+
   _onCloseButtonClick(evt) {
     evt.preventDefault();
     return typeof this._onCloseButton === `function` && this._onCloseButton();
@@ -202,35 +230,12 @@ export default class FilmDetails extends Component {
   }
 
   _onUserRatingClick(evt) {
-    if (evt.target.matches(`film-details__user-rating-input`)) {
+    if (evt.target.className === `film-details__user-rating-label`) {
       evt.preventDefault();
+      const newData = this._dataUpdate();
       // eslint-disable-next-line no-unused-expressions
-      typeof this.onUserRating === `function` && this.onUserRating();
+      typeof this.onUserRating === `function` && this.onUserRating(newData);
     }
-  }
-
-  _processForm(newComment) {
-    const entry = {
-      text: [],
-      author: ``,
-      date: new Date(),
-    };
-
-    entry.text = newComment.text;
-    entry.author = newComment.author;
-    entry.date = newComment.date;
-    return entry;
-  }
-
-  _dataUpdate() {
-    const comment = {
-      text: this._element.querySelector(`.film-details__comment-input`).value,
-      author: `new author`,
-      date: moment().format(`YYYY-MM-DD`),
-    };
-    const newData = this._processForm(comment);
-    this.update(newData);
-    return newData;
   }
 
   bind() {
@@ -250,7 +255,9 @@ export default class FilmDetails extends Component {
   }
 
   update(newData) {
-    this._comments.push(newData);
+    // eslint-disable-next-line no-unused-expressions
+    newData.text && this._comments.push(newData);
     this._commentsCount = this._comments.length;
+    this._userRating = newData.userRating;
   }
 }

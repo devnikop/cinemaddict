@@ -5,7 +5,7 @@ const FilmCardMap = new Map([
   [`TITLE_COUNT`, 15],
   [`ORIGINAL_TITLE_COUNT`, 3],
   [`RATING_MIN`, 1],
-  [`RATING_MAX`, 10],
+  [`RATING_MAX`, 9],
   [`DURATION_MIN`, 60],
   [`DURATION_MAX`, 300],
   [`GENRE_COUNT`, 12],
@@ -92,10 +92,6 @@ export const filmCard = {
       date: moment(`2019-03-21`).format(`YYYY-MM-DD`)
     },
   ],
-  // comments: [
-  //   `Lorem ipsum dolor sit amet, consectetur adipiscing elit.`,
-  //   `Cras aliquet varius magna, non porta ligula feugiat eget.`,
-  // ],
   isOnWatchlist: false,
   isWatched: true,
   isFavorite: false,
