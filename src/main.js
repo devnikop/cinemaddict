@@ -1,5 +1,5 @@
-import FilmCards from './film-cards.js';
-import Filters from './filters.js';
+import FilmCards from './film-cards';
+import Filters from './filters';
 
 const FILM_CARDS_COUNT = 7;
 const TOP_RATED_FILM_COUNT = 2;
@@ -15,8 +15,8 @@ const addNodeListInContainer = (nodeList, container) => {
 
 const filmsCards = new FilmCards();
 const filmCardNodeList = filmsCards.render(FILM_CARDS_COUNT);
-const topRatedFilmList = filmsCards.render(TOP_RATED_FILM_COUNT, true);
-const mostCommentedFilmList = filmsCards.render(MOST_COMMENTED_FILM_COUNT, true);
+const topRatedFilmList = filmsCards.render(TOP_RATED_FILM_COUNT, false);
+const mostCommentedFilmList = filmsCards.render(MOST_COMMENTED_FILM_COUNT, false);
 
 const filmsCommonContainerElement = document.querySelector(`.films`);
 const filmsListContainerElement = filmsCommonContainerElement.querySelector(`.films-list .films-list__container`);

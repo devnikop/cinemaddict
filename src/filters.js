@@ -1,5 +1,5 @@
-import {renderFilter} from './filter.js';
-import {getRandomInt} from './util.js';
+import {renderFilter} from './filter';
+import {getRandomInt} from './util';
 
 const FILM_COUNT_MIN = 1;
 const FILM_COUNT_MAX = 7;

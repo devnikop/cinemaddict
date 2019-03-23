@@ -1,11 +1,11 @@
-import {getRandomInt} from './util.js';
+import {getRandomInt} from './util';
+import moment from '../node_modules/moment';
 
 const FilmCardMap = new Map([
   [`TITLE_COUNT`, 15],
+  [`ORIGINAL_TITLE_COUNT`, 3],
   [`RATING_MIN`, 1],
-  [`RATING_MAX`, 10],
-  [`YEAR_MIN`, 1950],
-  [`YEAR_MAX`, 2020],
+  [`RATING_MAX`, 9],
   [`DURATION_MIN`, 60],
   [`DURATION_MAX`, 300],
   [`GENRE_COUNT`, 12],
@@ -33,9 +33,23 @@ export const filmCard = {
     `Batman v Superman: Dawn of Justice`,
     `Man of Steel`,
   ][Math.floor(Math.random() * FilmCardMap.get(`TITLE_COUNT`))],
-  rating: getRandomInt(FilmCardMap.get(`RATING_MIN`), FilmCardMap.get(`RATING_MAX`)),
-  year: getRandomInt(FilmCardMap.get(`YEAR_MIN`), FilmCardMap.get(`YEAR_MAX`)),
-  duration: `${getRandomInt(FilmCardMap.get(`DURATION_MIN`), FilmCardMap.get(`DURATION_MAX`))}`,
+  titleOriginal: [
+    `Originaltitle`,
+    `Originaltitle2`,
+    `Originaltitle3`,
+  ][Math.floor(Math.random() * FilmCardMap.get(`ORIGINAL_TITLE_COUNT`))],
+  averageRating: getRandomInt(FilmCardMap.get(`RATING_MIN`), FilmCardMap.get(`RATING_MAX`)),
+  userRating: getRandomInt(FilmCardMap.get(`RATING_MIN`), FilmCardMap.get(`RATING_MAX`)),
+  country: `USA`,
+  actorCast: [
+    `Samuel L. Jackson`,
+    `Catherine Keener`,
+    `Sophia Bush`,
+    `Somebody`,
+    `Something`
+  ],
+  premiereDate: moment(`2015-05-14`).format(`YYYY-MM-DD`),
+  duration: `${moment.duration(getRandomInt(FilmCardMap.get(`DURATION_MIN`), FilmCardMap.get(`DURATION_MAX`)), `m`).asMinutes()}`,
   genre: [
     `Action`,
     `Adventure`,
@@ -50,7 +64,8 @@ export const filmCard = {
     `Sci-Fi`,
     `Sport`,
     `Thriller`
-  ][Math.floor(Math.random() * FilmCardMap.get(`GENRE_COUNT`))],
+  ],
+  ageLimit: 18,
   poster: `images/posters/blackmail.jpg`,
   description: [
     `Lorem ipsum dolor sit amet, consectetur adipiscing elit.`,
@@ -65,7 +80,18 @@ export const filmCard = {
     `Nunc fermentum tortor ac porta dapibus.`,
     `In rutrum ac purus sit amet tempus.`,
   ][Math.floor(Math.random() * FilmCardMap.get(`DESCRIPTION_COUNT`))],
-  commentsCount: `${getRandomInt(FilmCardMap.get(`COMMENTS_MIN`), FilmCardMap.get(`COMMENTS_MAX`))}`,
+  comments: [
+    {
+      text: `Lorem ipsum dolor sit amet, consectetur adipiscing elit.`,
+      author: `Tim Macoveev`,
+      date: moment(`2019-03-18`).format(`YYYY-MM-DD`)
+    },
+    {
+      text: `LCras aliquet varius magna, non porta ligula feugiat eget.`,
+      author: `Nikolay`,
+      date: moment(`2019-03-21`).format(`YYYY-MM-DD`)
+    },
+  ],
   isOnWatchlist: false,
   isWatched: true,
   isFavorite: false,

@@ -1,4 +1,4 @@
-import {createElement} from './util.js';
+import {createElement} from './util';
 
 export default class Component {
   constructor(film) {
@@ -7,22 +7,32 @@ export default class Component {
     }
 
     this._title = film.title;
-    this._rating = film.rating;
-    this._year = film.year;
-    this._duration = film.duration;
+    this._titleOriginal = film.titleOriginal;
+    this._averageRating = film.averageRating;
+    this._premiereDate = film.premiereDate;
+    this._duration = +film.duration;
     this._genre = film.genre;
     this._poster = film.poster;
     this._description = film.description;
-    this._commentsCount = film.commentsCount;
-    this._isOnWatchlist = film.isOnWatchlist;
-    this._isWatched = film.isWatched;
-    this._isFavorite = film.isFavorite;
+    this._comments = film.comments;
+    this._commentsCount = film.comments.length;
+
+
+    this._state = {
+      _isOnWatchlist: film.isOnWatchlist,
+      _isWatched: film.isWatched,
+      _isFavorite: film.isFavorite,
+    };
 
     this._element = null;
   }
 
   get template() {
     throw new Error(`You have to define template.`);
+  }
+
+  get element() {
+    return this._element;
   }
 
   bind() {}
@@ -40,4 +50,6 @@ export default class Component {
     this._element.remove();
     this._element = null;
   }
+
+  update() {}
 }
