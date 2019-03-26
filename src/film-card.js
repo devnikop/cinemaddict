@@ -91,7 +91,7 @@ export default class FilmCard extends Component {
     }
   }
 
-  update() {
-    this._commentsCount = this._comments.length;
+  update(newData) {
+    this._commentsCount = newData.comments.length;
   }
 }

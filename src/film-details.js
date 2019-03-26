@@ -175,6 +175,22 @@ export default class FilmDetails extends Component {
     `.trim();
   }
 
+  get _newData() {
+    return {
+      text: this._element.querySelector(`.film-details__comment-input`).value,
+      author: `new author`,
+      date: moment().format(`YYYY-MM-DD`),
+      userRating: this.element.querySelector(`.film-details__user-rating-input:checked`).value,
+    };
+  }
+
+  get _currentData() {
+    return {
+      comments: this._comments,
+      userRating: this._userRating,
+    };
+  }
+
   set onCloseButtonClick(fn) {
     this._onCloseButton = fn;
   }
@@ -187,54 +203,47 @@ export default class FilmDetails extends Component {
     this.onUserRating = fn;
   }
 
-  _processForm(newData) {
+  _processNewData(newData) {
     const entry = {
-      text: [],
-      author: ``,
-      date: new Date(),
+      comments: {
+        text: [],
+        author: ``,
+        date: new Date(),
+      },
       userRating: ``,
     };
 
-    entry.text = newData.text;
-    entry.author = newData.author;
-    entry.date = newData.date;
+    entry.comments.text = newData.text;
+    entry.comments.author = newData.author;
+    entry.comments.date = newData.date;
     entry.userRating = newData.userRating;
     return entry;
   }
 
-  _dataUpdate() {
-    const data = {
-      text: this._element.querySelector(`.film-details__comment-input`).value,
-      author: `new author`,
-      date: moment().format(`YYYY-MM-DD`),
-      // userRating: this.element.querySelector(`.film-details__user-rating-input:hover`).value,
-      userRating: this.element.querySelector(`.film-details__user-rating-input:checked`).value,
-    };
-    const newData = this._processForm(data);
-    this.update(newData);
-    return newData;
-  }
-
   _onCloseButtonClick(evt) {
     evt.preventDefault();
-    return typeof this._onCloseButton === `function` && this._onCloseButton();
+    if (typeof this._onCloseButton === `function`) {
+      this._onCloseButton();
+    }
   }
 
   _onCommentEnter(evt) {
     if (evt.key === `Enter`) {
       evt.preventDefault();
-      const newData = this._dataUpdate();
-      // eslint-disable-next-line no-unused-expressions
-      typeof this._onComment === `function` && this._onComment(newData);
+      this.update(this._processNewData(this._newData));
+      if (typeof this._onComment === `function`) {
+        this._onComment(this._currentData);
+      }
     }
   }
 
   _onUserRatingClick(evt) {
     if (evt.target.className === `film-details__user-rating-label`) {
-      evt.preventDefault();
-      const newData = this._dataUpdate();
-      // eslint-disable-next-line no-unused-expressions
-      typeof this.onUserRating === `function` && this.onUserRating(newData);
+      document.querySelector(`input#${evt.target.htmlFor}`).checked = true;
+      this.update(this._processNewData(this._newData));
+      if (typeof this.onUserRating === `function`) {
+        this.onUserRating();
+      }
     }
   }
 
@@ -254,10 +263,11 @@ export default class FilmDetails extends Component {
     this._userRatingContainerElement.removeEventListener(`click`, this._onUserRatingClick);
   }
 
-  update(newData) {
-    // eslint-disable-next-line no-unused-expressions
-    newData.text && this._comments.push(newData);
+  update(newObject) {
+    if (newObject.comments.text) {
+      this._comments.push(newObject.comments);
+    }
     this._commentsCount = this._comments.length;
-    this._userRating = newData.userRating;
+    this._userRating = newObject.userRating;
   }
 }
