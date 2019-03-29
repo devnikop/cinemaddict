@@ -5,3 +5,13 @@ export const createElement = (template) => {
   container.insertAdjacentHTML(`afterbegin`, template);
   return container.firstChild;
 };
+
+export const removeAll = (elements) => {
+  for (const value of elements) {
+    value.remove();
+  }
+};
+
+export const clearContainer = (container, selector) => {
+  removeAll(container.querySelectorAll(selector));
+};

@@ -1,6 +1,7 @@
 import {filmCardList as filmCardDataList} from './data';
 import FilmCards from './film-cards';
 import Filters from './filters';
+import {clearContainer} from './util';
 
 const TOP_RATED_FILM_COUNT = 2;
 const MOST_COMMENTED_FILM_COUNT = 2;
@@ -11,6 +12,39 @@ const addNodeListInContainer = (nodeList, container) => {
     fragment.appendChild(node);
   }
   container.appendChild(fragment);
+};
+
+const getOnWatchlist = () => {
+  return filmCardDataList.filter((currentCard) => currentCard.isOnWatchlist);
+};
+
+const getWatched = () => {
+  return filmCardDataList.filter((currentCard) => currentCard.isWatched);
+};
+
+const getFavorites = () => {
+  return filmCardDataList.filter((currentCard) => currentCard.isFavorite);
+};
+
+const filterFilmCards = (filterName) => {
+  let filteredCards = [];
+  switch (filterName) {
+    case `All movies`:
+      filteredCards = filmsCards.render(filmCardDataList);
+      break;
+    case `Watchlist`:
+      filteredCards = filmsCards.render(getOnWatchlist());
+      break;
+    case `History`:
+      filteredCards = filmsCards.render(getWatched());
+      break;
+    case `Favorites`:
+      filteredCards = filmsCards.render(getFavorites());
+      break;
+    default:
+      break;
+  }
+  return filteredCards;
 };
 
 const filmsCards = new FilmCards();
@@ -38,4 +72,9 @@ addNodeListInContainer(topRatedFilmList, topRatedContainerElement);
 addNodeListInContainer(mostCommentedFilmList, mostCommentedContainerElement);
 
 const filters = new Filters();
+filters.onFilter = (filterName) => {
+  clearContainer(filmsListContainerElement, `.film-card`);
+  const filteredCards = filterFilmCards(filterName);
+  addNodeListInContainer(filteredCards, filmsListContainerElement);
+};
 filters.render(filmsListContainerElement, filmCardNodeList);

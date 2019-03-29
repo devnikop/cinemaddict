@@ -94,9 +94,9 @@ const createFilmCardData = () => {
         date: moment(`2019-03-21`).format(`YYYY-MM-DD`)
       },
     ],
-    isOnWatchlist: false,
-    isWatched: true,
-    isFavorite: false,
+    isOnWatchlist: Boolean(Math.round(Math.random())),
+    isWatched: Boolean(Math.round(Math.random())),
+    isFavorite: Boolean(Math.round(Math.random())),
   };
 };
 
