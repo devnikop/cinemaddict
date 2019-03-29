@@ -1,10 +1,10 @@
-import Component from './component';
+import FilmComponent from './film-component';
 import moment from '../node_modules/moment';
 
 const ACTOR_COUNT = 3;
 const GENRE_COUNT = 3;
 
-export default class FilmDetails extends Component {
+export default class FilmDetails extends FilmComponent {
   constructor(film, hasControls = false) {
     super(film);
     this._ageLimit = film.ageLimit;
@@ -21,10 +21,16 @@ export default class FilmDetails extends Component {
     this._onCloseButtonClick = this._onCloseButtonClick.bind(this);
     this._onCommentEnter = this._onCommentEnter.bind(this);
     this._onUserRatingClick = this._onUserRatingClick.bind(this);
+    this._onAddToWatchListClick = this._onAddToWatchListClick.bind(this);
+    this._onMarkAsWatchedClick = this._onMarkAsWatchedClick.bind(this);
+    this._onFavoriteClick = this._onFavoriteClick.bind(this);
 
     this._onCloseButton = null;
     this._onComment = null;
-    this.onUserRating = null;
+    this._onUserRating = null;
+    this._onAddToWatchList = null;
+    this._onMarkAsWatched = null;
+    this._onAddToFavorite = null;
   }
 
   get template() {
@@ -175,6 +181,22 @@ export default class FilmDetails extends Component {
     `.trim();
   }
 
+  get _newData() {
+    return {
+      text: this.element.querySelector(`.film-details__comment-input`).value,
+      author: `new author`,
+      date: moment().format(`YYYY-MM-DD`),
+      userRating: this.element.querySelector(`.film-details__user-rating-input:checked`).value,
+    };
+  }
+
+  get _currentData() {
+    return {
+      comments: this._comments,
+      userRating: this._userRating,
+    };
+  }
+
   set onCloseButtonClick(fn) {
     this._onCloseButton = fn;
   }
@@ -184,80 +206,116 @@ export default class FilmDetails extends Component {
   }
 
   set onUserRatingClick(fn) {
-    this.onUserRating = fn;
+    this._onUserRating = fn;
   }
 
-  _processForm(newData) {
+  set onAddToWatchList(fn) {
+    this._onAddToWatchList = fn;
+  }
+
+  set onMarkAsWatched(fn) {
+    this._onMarkAsWatched = fn;
+  }
+
+  set onAddToFavorite(fn) {
+    this._onAddToFavorite = fn;
+  }
+
+  _processNewData(newData) {
     const entry = {
-      text: [],
-      author: ``,
-      date: new Date(),
+      comments: {
+        text: [],
+        author: ``,
+        date: new Date(),
+      },
       userRating: ``,
     };
 
-    entry.text = newData.text;
-    entry.author = newData.author;
-    entry.date = newData.date;
+    entry.comments.text = newData.text;
+    entry.comments.author = newData.author;
+    entry.comments.date = newData.date;
     entry.userRating = newData.userRating;
     return entry;
   }
 
-  _dataUpdate() {
-    const data = {
-      text: this._element.querySelector(`.film-details__comment-input`).value,
-      author: `new author`,
-      date: moment().format(`YYYY-MM-DD`),
-      // userRating: this.element.querySelector(`.film-details__user-rating-input:hover`).value,
-      userRating: this.element.querySelector(`.film-details__user-rating-input:checked`).value,
-    };
-    const newData = this._processForm(data);
-    this.update(newData);
-    return newData;
-  }
-
   _onCloseButtonClick(evt) {
     evt.preventDefault();
-    return typeof this._onCloseButton === `function` && this._onCloseButton();
+    if (typeof this._onCloseButton === `function`) {
+      this._onCloseButton();
+    }
   }
 
   _onCommentEnter(evt) {
     if (evt.key === `Enter`) {
       evt.preventDefault();
-      const newData = this._dataUpdate();
-      // eslint-disable-next-line no-unused-expressions
-      typeof this._onComment === `function` && this._onComment(newData);
+      this.update(this._processNewData(this._newData));
+      if (typeof this._onComment === `function`) {
+        this._onComment(this._currentData);
+      }
     }
   }
 
   _onUserRatingClick(evt) {
     if (evt.target.className === `film-details__user-rating-label`) {
-      evt.preventDefault();
-      const newData = this._dataUpdate();
-      // eslint-disable-next-line no-unused-expressions
-      typeof this.onUserRating === `function` && this.onUserRating(newData);
+      document.querySelector(`input#${evt.target.htmlFor}`).checked = true;
+      this.update(this._processNewData(this._newData));
+      if (typeof this._onUserRating === `function`) {
+        this._onUserRating();
+      }
+    }
+  }
+
+  _onAddToWatchListClick() {
+    if (typeof this._onAddToWatchList === `function`) {
+      this._state._isOnWatchlist = !this._state._isOnWatchlist;
+      this._onAddToWatchList(this._state._isOnWatchlist);
+    }
+  }
+
+  _onMarkAsWatchedClick() {
+    if (typeof this._onMarkAsWatched === `function`) {
+      this._state._isWatched = !this._state._isWatched;
+      this._onMarkAsWatched(this._state._isWatched);
+    }
+  }
+
+  _onFavoriteClick() {
+    if (typeof this._onAddToFavorite === `function`) {
+      this._state._isFavorite = !this._state._isFavorite;
+      this._onAddToFavorite(this._state._isFavorite);
     }
   }
 
   bind() {
-    this._closeButton = this._element.querySelector(`.film-details__close-btn`);
-    this._commentElement = this._element.querySelector(`.film-details__comment-input`);
-    this._userRatingContainerElement = this._element.querySelector(`.film-details__user-rating-score`);
+    this._closeButton = this.element.querySelector(`.film-details__close-btn`);
+    this._commentElement = this.element.querySelector(`.film-details__comment-input`);
+    this._userRatingContainerElement = this.element.querySelector(`.film-details__user-rating-score`);
+    this._addToWatchlist = this.element.querySelector(`.film-details__control-label--watchlist`);
+    this._markAsWatched = this.element.querySelector(`.film-details__control-label--watched`);
+    this._markAsFavorite = this.element.querySelector(`.film-details__control-label--favorite`);
 
     this._closeButton.addEventListener(`click`, this._onCloseButtonClick);
     this._commentElement.addEventListener(`keydown`, this._onCommentEnter);
     this._userRatingContainerElement.addEventListener(`click`, this._onUserRatingClick);
+    this._addToWatchlist.addEventListener(`click`, this._onAddToWatchListClick);
+    this._markAsWatched.addEventListener(`click`, this._onMarkAsWatchedClick);
+    this._markAsFavorite.addEventListener(`click`, this._onFavoriteClick);
   }
 
   unbind() {
     this._closeButton.removeEventListener(`click`, this._onCloseButtonClick);
     this._commentElement.removeEventListener(`keydown`, this._onCommentEnter);
     this._userRatingContainerElement.removeEventListener(`click`, this._onUserRatingClick);
+    this._addToWatchlist.removeEventListener(`click`, this._onAddToWatchListClick);
+    this._markAsWatched.removeEventListener(`click`, this._onMarkAsWatchedClick);
+    this._markAsFavorite.removeEventListener(`click`, this._onFavoriteClick);
   }
 
-  update(newData) {
-    // eslint-disable-next-line no-unused-expressions
-    newData.text && this._comments.push(newData);
+  update(newObject) {
+    if (newObject.comments.text) {
+      this._comments.push(newObject.comments);
+    }
     this._commentsCount = this._comments.length;
-    this._userRating = newData.userRating;
+    this._userRating = newObject.userRating;
   }
 }

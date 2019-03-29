@@ -1,41 +1,60 @@
-import {filmCard as filmCardData} from './data';
 import FilmCard from './film-card';
 import FilmDetails from './film-details';
+import _ from '../node_modules/lodash';
 
 export default class FilmCards {
-  _bindHandlers(filmDetails, film) {
+  _bindHandlers(filmDetails, film, currentFilmCardData) {
     filmDetails.onCloseButtonClick = () => {
       filmDetails.unrender();
+      const currentFilmCard = film.element;
+      document.querySelector(`.films-list__container`).replaceChild(film.render(), currentFilmCard);
     };
     filmDetails.onCommentEnter = (newData) => {
       const currentFilmDetails = filmDetails.element;
       document.body.replaceChild(filmDetails.render(), currentFilmDetails);
-      film.update(newData);
-      const currentFilmCard = film.element;
-      document.querySelector(`.films-list__container`).replaceChild(film.render(), currentFilmCard);
+      const updatedCurrentData = Object.assign(currentFilmCardData, newData);
+      film.update(_.cloneDeep(updatedCurrentData));
     };
-    filmDetails.onUserRatingClick = (newData) => {
-      filmCardData.userRating = newData.userRating;
+    filmDetails.onUserRatingClick = () => {
       const currentFilmDetails = filmDetails.element;
       document.body.replaceChild(filmDetails.render(), currentFilmDetails);
     };
-  }
-
-  _bindDetails(film) {
-    film.onCommentsClick = () => {
-      const filmDetails = new FilmDetails(filmCardData);
-      const filmDetailsNode = filmDetails.render();
-      this._bindHandlers(filmDetails, film);
-      document.body.appendChild(filmDetailsNode);
+    filmDetails.onAddToWatchList = (newState) => {
+      currentFilmCardData.isOnWatchlist = newState;
+    };
+    filmDetails.onMarkAsWatched = (newState) => {
+      currentFilmCardData.isWatched = newState;
+    };
+    filmDetails.onAddToFavorite = (newState) => {
+      currentFilmCardData.isFavorite = newState;
     };
   }
 
-  render(filmCardCount, controls = true) {
+  _bindDetails(film, currentFilmCardData) {
+    film.onCommentsClick = () => {
+      const filmDetails = new FilmDetails(_.cloneDeep(currentFilmCardData));
+      const filmDetailsNode = filmDetails.render();
+      this._bindHandlers(filmDetails, film, currentFilmCardData);
+      document.body.appendChild(filmDetailsNode);
+    };
+    film.onAddToWatchList = (newState) => {
+      currentFilmCardData.isOnWatchlist = newState;
+    };
+    film.onMarkAsWatched = (newState) => {
+      currentFilmCardData.isWatched = newState;
+    };
+    film.onAddToFavorite = (newState) => {
+      currentFilmCardData.isFavorite = newState;
+    };
+  }
+
+  render(filmCardDataList, controls = true) {
     const filmCardList = [];
-    for (let i = 0; i < filmCardCount; i++) {
-      const film = new FilmCard(filmCardData, controls);
+    for (let i = 0; i < filmCardDataList.length; i++) {
+      const currentFilmCardData = filmCardDataList[i];
+      const film = new FilmCard(_.cloneDeep(currentFilmCardData), controls);
       filmCardList.push(film.render());
-      this._bindDetails(film);
+      this._bindDetails(film, currentFilmCardData);
     }
     return filmCardList;
   }

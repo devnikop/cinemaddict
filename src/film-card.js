@@ -1,7 +1,7 @@
-import Component from './component';
+import FilmComponent from './film-component';
 import moment from '../node_modules/moment';
 
-export default class FilmCard extends Component {
+export default class FilmCard extends FilmComponent {
   constructor(film, controls = true) {
     super(film);
     this._controls = controls;
@@ -12,11 +12,13 @@ export default class FilmCard extends Component {
     this._markAsFavorite = null;
 
     this._onCommentsClick = this._onCommentsClick.bind(this);
-    this._onWacthlistClick = this._onWacthlistClick.bind(this);
-    this._onWatchedClick = this._onWatchedClick.bind(this);
+    this._onAddToWatchListClick = this._onAddToWatchListClick.bind(this);
+    this._onMarkAsWatchedClick = this._onMarkAsWatchedClick.bind(this);
     this._onFavoriteClick = this._onFavoriteClick.bind(this);
 
     this._onComments = null;
+    this._onAddToWatchList = null;
+    this._onMarkAsWatched = null;
   }
 
   get template() {
@@ -46,37 +48,58 @@ export default class FilmCard extends Component {
     this._onComments = fn;
   }
 
+  set onAddToWatchList(fn) {
+    this._onAddToWatchList = fn;
+  }
+
+  set onMarkAsWatched(fn) {
+    this._onMarkAsWatched = fn;
+  }
+
+  set onAddToFavorite(fn) {
+    this._onAddToFavorite = fn;
+  }
+
   _onCommentsClick(evt) {
     evt.preventDefault();
     return typeof this._onComments === `function` && this._onComments();
   }
 
-  _onWacthlistClick(evt) {
+  _onAddToWatchListClick(evt) {
     evt.preventDefault();
-    this._state._isOnWatchlist = !this._state._isOnWatchlist;
+    if (typeof this._onAddToWatchList === `function`) {
+      this._state._isOnWatchlist = !this._state._isOnWatchlist;
+      this._onAddToWatchList(this._state._isOnWatchlist);
+    }
   }
 
-  _onWatchedClick(evt) {
+  _onMarkAsWatchedClick(evt) {
     evt.preventDefault();
-    this._state._isWatched = !this._state._isWatched;
+    if (typeof this._onMarkAsWatched === `function`) {
+      this._state._isWatched = !this._state._isWatched;
+      this._onMarkAsWatched(this._state._isWatched);
+    }
   }
 
   _onFavoriteClick(evt) {
     evt.preventDefault();
-    this._state._isFavorite = !this._state._isFavorite;
+    if (typeof this._onAddToFavorite === `function`) {
+      this._state._isFavorite = !this._state._isFavorite;
+      this._onAddToFavorite(this._state._isFavorite);
+    }
   }
 
   bind() {
-    this._commentsButton = this._element.querySelector(`.film-card__comments`);
+    this._commentsButton = this.element.querySelector(`.film-card__comments`);
     this._commentsButton.addEventListener(`click`, this._onCommentsClick);
 
     if (this._controls) {
-      this._addToWatchlist = this._element.querySelector(`.film-card__controls-item--add-to-watchlist`);
-      this._markAsWatched = this._element.querySelector(`.film-card__controls-item--mark-as-watched`);
-      this._markAsFavorite = this._element.querySelector(`.film-card__controls-item--favorite`);
+      this._addToWatchlist = this.element.querySelector(`.film-card__controls-item--add-to-watchlist`);
+      this._markAsWatched = this.element.querySelector(`.film-card__controls-item--mark-as-watched`);
+      this._markAsFavorite = this.element.querySelector(`.film-card__controls-item--favorite`);
 
-      this._addToWatchlist.addEventListener(`click`, this._onWacthlistClick);
-      this._markAsWatched.addEventListener(`click`, this._onWatchedClick);
+      this._addToWatchlist.addEventListener(`click`, this._onAddToWatchListClick);
+      this._markAsWatched.addEventListener(`click`, this._onMarkAsWatchedClick);
       this._markAsFavorite.addEventListener(`click`, this._onFavoriteClick);
     }
   }
@@ -85,13 +108,13 @@ export default class FilmCard extends Component {
     this._commentsButton.removeEventListener(`click`, this._onCommentsClick);
 
     if (this._controls) {
-      this._addToWatchlist.removeEventListener(`click`, this._onWacthlistClick);
-      this._markAsWatched.removeEventListener(`click`, this._onWatchedClick);
+      this._addToWatchlist.removeEventListener(`click`, this._onAddToWatchListClick);
+      this._markAsWatched.removeEventListener(`click`, this._onMarkAsWatchedClick);
       this._markAsFavorite.removeEventListener(`click`, this._onFavoriteClick);
     }
   }
 
-  update() {
-    this._commentsCount = this._comments.length;
+  update(newData) {
+    this._commentsCount = newData.comments.length;
   }
 }
