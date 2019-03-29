@@ -66,7 +66,7 @@ const createFilmCardData = () => {
       `Sci-Fi`,
       `Sport`,
       `Thriller`
-    ],
+    ].filter(() => Boolean(Math.round(Math.random()))),
     ageLimit: 18,
     poster: `images/posters/blackmail.jpg`,
     description: [

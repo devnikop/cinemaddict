@@ -1,6 +1,7 @@
 import {filmCardList as filmCardDataList} from './data';
 import FilmCards from './film-cards';
 import Filters from './filters';
+import Statistic from './statistic';
 import {clearContainer} from './util';
 
 const TOP_RATED_FILM_COUNT = 2;
@@ -73,8 +74,13 @@ addNodeListInContainer(mostCommentedFilmList, mostCommentedContainerElement);
 
 const filters = new Filters();
 filters.onFilter = (filterName) => {
+  filmsCommonContainerElement.classList.remove(`visually-hidden`);
+  statisticComponent.element.classList.add(`visually-hidden`);
   clearContainer(filmsListContainerElement, `.film-card`);
   const filteredCards = filterFilmCards(filterName);
   addNodeListInContainer(filteredCards, filmsListContainerElement);
 };
 filters.render(filmsListContainerElement, filmCardNodeList);
+
+const statisticComponent = new Statistic();
+document.querySelector(`main`).appendChild(statisticComponent.render());
