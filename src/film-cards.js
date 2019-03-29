@@ -19,6 +19,15 @@ export default class FilmCards {
       const currentFilmDetails = filmDetails.element;
       document.body.replaceChild(filmDetails.render(), currentFilmDetails);
     };
+    filmDetails.onAddToWatchList = (newState) => {
+      currentFilmCardData.isOnWatchlist = newState;
+    };
+    filmDetails.onMarkAsWatched = (newState) => {
+      currentFilmCardData.isWatched = newState;
+    };
+    filmDetails.onAddToFavorite = (newState) => {
+      currentFilmCardData.isFavorite = newState;
+    };
   }
 
   _bindDetails(film, currentFilmCardData) {
@@ -27,6 +36,15 @@ export default class FilmCards {
       const filmDetailsNode = filmDetails.render();
       this._bindHandlers(filmDetails, film, currentFilmCardData);
       document.body.appendChild(filmDetailsNode);
+    };
+    film.onAddToWatchList = (newState) => {
+      currentFilmCardData.isOnWatchlist = newState;
+    };
+    film.onMarkAsWatched = (newState) => {
+      currentFilmCardData.isWatched = newState;
+    };
+    film.onAddToFavorite = (newState) => {
+      currentFilmCardData.isFavorite = newState;
     };
   }
 
