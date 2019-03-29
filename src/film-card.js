@@ -1,7 +1,7 @@
-import Component from './component';
+import FilmComponent from './film-component';
 import moment from '../node_modules/moment';
 
-export default class FilmCard extends Component {
+export default class FilmCard extends FilmComponent {
   constructor(film, controls = true) {
     super(film);
     this._controls = controls;

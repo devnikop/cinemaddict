@@ -1,10 +1,10 @@
-import Component from './component';
+import FilmComponent from './film-component';
 import moment from '../node_modules/moment';
 
 const ACTOR_COUNT = 3;
 const GENRE_COUNT = 3;
 
-export default class FilmDetails extends Component {
+export default class FilmDetails extends FilmComponent {
   constructor(film, hasControls = false) {
     super(film);
     this._ageLimit = film.ageLimit;
