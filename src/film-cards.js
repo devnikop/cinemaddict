@@ -3,11 +3,20 @@ import FilmDetails from './film-details';
 import _ from '../node_modules/lodash';
 
 export default class FilmCards {
+  constructor(api) {
+    this._api = api;
+  }
   _bindHandlers(filmDetails, film, currentFilmCardData) {
-    filmDetails.onCloseButtonClick = () => {
-      filmDetails.unrender();
-      const currentFilmCard = film.element;
-      document.querySelector(`.films-list__container`).replaceChild(film.render(), currentFilmCard);
+    filmDetails.onCloseButtonClick = (id, newData) => {
+      const updatedCurrentData = Object.assign(currentFilmCardData, newData);
+      Object.assign(currentFilmCardData, newData);
+      this._api.updateCard({id, data: updatedCurrentData.toRAW()})
+        .then((newCard) => {
+          filmDetails.unrender();
+          film.update(_.cloneDeep(newCard));
+          const currentFilmCard = film.element;
+          document.querySelector(`.films-list__container`).replaceChild(film.render(), currentFilmCard);
+        });
     };
     filmDetails.onCommentEnter = (newData) => {
       const currentFilmDetails = filmDetails.element;
@@ -15,9 +24,10 @@ export default class FilmCards {
       const updatedCurrentData = Object.assign(currentFilmCardData, newData);
       film.update(_.cloneDeep(updatedCurrentData));
     };
-    filmDetails.onUserRatingClick = () => {
+    filmDetails.onUserRatingClick = (newData) => {
       const currentFilmDetails = filmDetails.element;
       document.body.replaceChild(filmDetails.render(), currentFilmDetails);
+      Object.assign(currentFilmCardData, newData);
     };
     filmDetails.onAddToWatchList = (newState) => {
       currentFilmCardData.isOnWatchlist = newState;

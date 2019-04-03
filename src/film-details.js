@@ -2,6 +2,7 @@ import FilmComponent from './film-component';
 import moment from '../node_modules/moment';
 
 const ACTOR_COUNT = 3;
+const WRITERS_COUNT = 3;
 const GENRE_COUNT = 3;
 
 export default class FilmDetails extends FilmComponent {
@@ -11,6 +12,8 @@ export default class FilmDetails extends FilmComponent {
     this._userRating = film.userRating;
     this._country = film.country;
     this._actorCast = film.actorCast;
+    this._director = film.director;
+    this._writers = film.writers;
 
     this._cardControls = hasControls;
 
@@ -63,11 +66,11 @@ export default class FilmDetails extends FilmComponent {
             <table class="film-details__table">
               <tr class="film-details__row">
                 <td class="film-details__term">Director</td>
-                <td class="film-details__cell">Brad Bird</td>
+                <td class="film-details__cell">${this._director}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Writers</td>
-                <td class="film-details__cell">Brad Bird</td>
+                <td class="film-details__cell">${this._writers.slice(0, WRITERS_COUNT).join(`, `)}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Actors</td>
@@ -121,7 +124,7 @@ export default class FilmDetails extends FilmComponent {
                   <p class="film-details__comment-text">${currentComment.text}</p>
                   <p class="film-details__comment-info">
                     <span class="film-details__comment-author">${currentComment.author}</span>
-                    <span class="film-details__comment-day">${moment(currentComment.date, `YYYY-MM-DD`).fromNow()}</span>
+                    <span class="film-details__comment-day">${moment(currentComment.date).fromNow()}</span>
                   </p>
                 </div>
               </li>
@@ -241,7 +244,7 @@ export default class FilmDetails extends FilmComponent {
   _onCloseButtonClick(evt) {
     evt.preventDefault();
     if (typeof this._onCloseButton === `function`) {
-      this._onCloseButton();
+      this._onCloseButton(this._id, this._currentData);
     }
   }
 
@@ -260,7 +263,7 @@ export default class FilmDetails extends FilmComponent {
       document.querySelector(`input#${evt.target.htmlFor}`).checked = true;
       this.update(this._processNewData(this._newData));
       if (typeof this._onUserRating === `function`) {
-        this._onUserRating();
+        this._onUserRating(this._currentData);
       }
     }
   }
