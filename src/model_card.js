@@ -20,7 +20,7 @@ export default class ModelCard {
     this.comments.push(data[`comments`].map((comment) => {
       return {
         author: comment.author,
-        text: comment.comment,
+        comment: comment.comment,
         date: comment.date,
         emotion: comment.emotion,
       };

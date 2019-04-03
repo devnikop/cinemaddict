@@ -26,7 +26,10 @@ export default class API {
   getCards() {
     return this._load({url: `movies`})
       .then(toJSON)
-      .then(ModelCard.parseCards);
+      .then(ModelCard.parseCards)
+      .catch((error) => {
+        throw error;
+      });
   }
 
   createCard({card}) {

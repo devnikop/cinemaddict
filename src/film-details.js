@@ -121,7 +121,7 @@ export default class FilmDetails extends FilmComponent {
               <li class="film-details__comment">
                 <span class="film-details__comment-emoji">😴</span>
                 <div>
-                  <p class="film-details__comment-text">${currentComment.text}</p>
+                  <p class="film-details__comment-text">${currentComment.comment}</p>
                   <p class="film-details__comment-info">
                     <span class="film-details__comment-author">${currentComment.author}</span>
                     <span class="film-details__comment-day">${moment(currentComment.date).fromNow()}</span>
@@ -186,9 +186,10 @@ export default class FilmDetails extends FilmComponent {
 
   get _newData() {
     return {
-      text: this.element.querySelector(`.film-details__comment-input`).value,
       author: `new author`,
-      date: moment().format(`YYYY-MM-DD`),
+      comment: this.element.querySelector(`.film-details__comment-input`).value,
+      date: +moment(),
+      emotion: `sleeping`,
       userRating: this.element.querySelector(`.film-details__user-rating-input:checked`).value,
     };
   }
@@ -227,14 +228,15 @@ export default class FilmDetails extends FilmComponent {
   _processNewData(newData) {
     const entry = {
       comments: {
-        text: [],
         author: ``,
+        comment: ``,
         date: new Date(),
+        emotion: ``,
       },
       userRating: ``,
     };
 
-    entry.comments.text = newData.text;
+    entry.comments.comment = newData.comment;
     entry.comments.author = newData.author;
     entry.comments.date = newData.date;
     entry.userRating = newData.userRating;
@@ -244,7 +246,7 @@ export default class FilmDetails extends FilmComponent {
   _onCloseButtonClick(evt) {
     evt.preventDefault();
     if (typeof this._onCloseButton === `function`) {
-      this._onCloseButton(this._id, this._currentData);
+      this._onCloseButton(this._currentData);
     }
   }
 
@@ -315,7 +317,7 @@ export default class FilmDetails extends FilmComponent {
   }
 
   update(newObject) {
-    if (newObject.comments.text) {
+    if (newObject.comments.comment) {
       this._comments.push(newObject.comments);
     }
     this._commentsCount = this._comments.length;
