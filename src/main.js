@@ -1,9 +1,11 @@
-import {filmCardList as filmCardDataList} from './data';
+import API from './api';
 import FilmCards from './film-cards';
 import Filters from './filters';
 import Statistic from './statistic';
 import {clearContainer} from './util';
 
+const END_POINT = ` https://es8-demo-srv.appspot.com/moowle`;
+const AUTHORIZATION = `Basic dXNlckBwYXNzd29rZAo=${Math.random()}`;
 const TOP_RATED_FILM_COUNT = 2;
 const MOST_COMMENTED_FILM_COUNT = 2;
 
@@ -48,39 +50,52 @@ const filterFilmCards = (filterName) => {
   return filteredCards;
 };
 
-const filmsCards = new FilmCards();
-const filmCardNodeList = filmsCards.render(filmCardDataList);
-
-const topRatedFilmDataList = [];
-for (let i = 0; i < TOP_RATED_FILM_COUNT; i++) {
-  topRatedFilmDataList.push(filmCardDataList[i]);
-}
-const topRatedFilmList = filmsCards.render(topRatedFilmDataList, false);
-
-const mostCommentedFilmDataList = [];
-for (let i = 0; i < MOST_COMMENTED_FILM_COUNT; i++) {
-  mostCommentedFilmDataList.push(filmCardDataList[i]);
-}
-const mostCommentedFilmList = filmsCards.render(mostCommentedFilmDataList, false);
-
 const filmsCommonContainerElement = document.querySelector(`.films`);
 const filmsListContainerElement = filmsCommonContainerElement.querySelector(`.films-list .films-list__container`);
 const topRatedContainerElement = filmsCommonContainerElement.querySelector(`.films-list__container--top-rated`);
 const mostCommentedContainerElement = filmsCommonContainerElement.querySelector(`.films-list__container--most-commented`);
 
-addNodeListInContainer(filmCardNodeList, filmsListContainerElement);
-addNodeListInContainer(topRatedFilmList, topRatedContainerElement);
-addNodeListInContainer(mostCommentedFilmList, mostCommentedContainerElement);
+let filmCardDataList = [];
+let filmsCards = ``;
+const api = new API(END_POINT, AUTHORIZATION);
+api.getCards()
+  .then((cards) => {
+    filmsListContainerElement.textContent = ``;
+    filmCardDataList = cards;
 
-const filters = new Filters();
-filters.onFilter = (filterName) => {
-  filmsCommonContainerElement.classList.remove(`visually-hidden`);
-  statisticComponent.element.classList.add(`visually-hidden`);
-  clearContainer(filmsListContainerElement, `.film-card`);
-  const filteredCards = filterFilmCards(filterName);
-  addNodeListInContainer(filteredCards, filmsListContainerElement);
-};
-filters.render(filmsListContainerElement, filmCardNodeList);
+    filmsCards = new FilmCards(api);
+    const filmCardNodeList = filmsCards.render(cards);
 
-const statisticComponent = new Statistic();
-document.querySelector(`main`).appendChild(statisticComponent.render());
+    // NEED TO IMPLEMENT TOP RATED & MOST COMMENTED
+    const topRatedFilmDataList = [];
+    for (let i = 0; i < TOP_RATED_FILM_COUNT; i++) {
+      topRatedFilmDataList.push(filmCardDataList[i]);
+    }
+    const topRatedFilmList = filmsCards.render(topRatedFilmDataList, false);
+
+    const mostCommentedFilmDataList = [];
+    for (let i = 0; i < MOST_COMMENTED_FILM_COUNT; i++) {
+      mostCommentedFilmDataList.push(filmCardDataList[i]);
+    }
+    const mostCommentedFilmList = filmsCards.render(mostCommentedFilmDataList, false);
+
+    addNodeListInContainer(filmCardNodeList, filmsListContainerElement);
+    addNodeListInContainer(topRatedFilmList, topRatedContainerElement);
+    addNodeListInContainer(mostCommentedFilmList, mostCommentedContainerElement);
+
+    const filters = new Filters();
+    filters.onFilter = (filterName) => {
+      filmsCommonContainerElement.classList.remove(`visually-hidden`);
+      statisticComponent.element.classList.add(`visually-hidden`);
+      clearContainer(filmsListContainerElement, `.film-card`);
+      const filteredCards = filterFilmCards(filterName);
+      addNodeListInContainer(filteredCards, filmsListContainerElement);
+    };
+    filters.render(filmsListContainerElement, filmCardNodeList);
+
+    const statisticComponent = new Statistic(filmCardDataList);
+    document.querySelector(`main`).appendChild(statisticComponent.render());
+  })
+  .catch(() => {
+    filmsListContainerElement.textContent = `Something went wrong while loading movies. Check your connection or try again later`;
+  });

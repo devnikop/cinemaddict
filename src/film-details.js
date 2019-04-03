@@ -2,6 +2,7 @@ import FilmComponent from './film-component';
 import moment from '../node_modules/moment';
 
 const ACTOR_COUNT = 3;
+const WRITERS_COUNT = 3;
 const GENRE_COUNT = 3;
 
 export default class FilmDetails extends FilmComponent {
@@ -11,6 +12,8 @@ export default class FilmDetails extends FilmComponent {
     this._userRating = film.userRating;
     this._country = film.country;
     this._actorCast = film.actorCast;
+    this._director = film.director;
+    this._writers = film.writers;
 
     this._cardControls = hasControls;
 
@@ -63,11 +66,11 @@ export default class FilmDetails extends FilmComponent {
             <table class="film-details__table">
               <tr class="film-details__row">
                 <td class="film-details__term">Director</td>
-                <td class="film-details__cell">Brad Bird</td>
+                <td class="film-details__cell">${this._director}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Writers</td>
-                <td class="film-details__cell">Brad Bird</td>
+                <td class="film-details__cell">${this._writers.slice(0, WRITERS_COUNT).join(`, `)}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Actors</td>
@@ -118,10 +121,10 @@ export default class FilmDetails extends FilmComponent {
               <li class="film-details__comment">
                 <span class="film-details__comment-emoji">😴</span>
                 <div>
-                  <p class="film-details__comment-text">${currentComment.text}</p>
+                  <p class="film-details__comment-text">${currentComment.comment}</p>
                   <p class="film-details__comment-info">
                     <span class="film-details__comment-author">${currentComment.author}</span>
-                    <span class="film-details__comment-day">${moment(currentComment.date, `YYYY-MM-DD`).fromNow()}</span>
+                    <span class="film-details__comment-day">${moment(currentComment.date).fromNow()}</span>
                   </p>
                 </div>
               </li>
@@ -183,9 +186,10 @@ export default class FilmDetails extends FilmComponent {
 
   get _newData() {
     return {
-      text: this.element.querySelector(`.film-details__comment-input`).value,
       author: `new author`,
-      date: moment().format(`YYYY-MM-DD`),
+      comment: this.element.querySelector(`.film-details__comment-input`).value,
+      date: +moment(),
+      emotion: `sleeping`,
       userRating: this.element.querySelector(`.film-details__user-rating-input:checked`).value,
     };
   }
@@ -224,14 +228,15 @@ export default class FilmDetails extends FilmComponent {
   _processNewData(newData) {
     const entry = {
       comments: {
-        text: [],
         author: ``,
+        comment: ``,
         date: new Date(),
+        emotion: ``,
       },
       userRating: ``,
     };
 
-    entry.comments.text = newData.text;
+    entry.comments.comment = newData.comment;
     entry.comments.author = newData.author;
     entry.comments.date = newData.date;
     entry.userRating = newData.userRating;
@@ -241,7 +246,7 @@ export default class FilmDetails extends FilmComponent {
   _onCloseButtonClick(evt) {
     evt.preventDefault();
     if (typeof this._onCloseButton === `function`) {
-      this._onCloseButton();
+      this._onCloseButton(this._currentData);
     }
   }
 
@@ -260,7 +265,7 @@ export default class FilmDetails extends FilmComponent {
       document.querySelector(`input#${evt.target.htmlFor}`).checked = true;
       this.update(this._processNewData(this._newData));
       if (typeof this._onUserRating === `function`) {
-        this._onUserRating();
+        this._onUserRating(this._currentData);
       }
     }
   }
@@ -312,7 +317,7 @@ export default class FilmDetails extends FilmComponent {
   }
 
   update(newObject) {
-    if (newObject.comments.text) {
+    if (newObject.comments.comment) {
       this._comments.push(newObject.comments);
     }
     this._commentsCount = this._comments.length;

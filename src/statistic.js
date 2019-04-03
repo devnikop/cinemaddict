@@ -1,5 +1,4 @@
 import Component from './component';
-import {filmCardList as filmCardDataList} from './data';
 import Chart from '../node_modules/chart.js';
 import ChartDataLabels from '../node_modules/chartjs-plugin-datalabels';
 import moment from '../node_modules/moment';
@@ -7,9 +6,10 @@ import moment from '../node_modules/moment';
 const BAR_HEIGHT = 50;
 
 export default class Statistic extends Component {
-  constructor() {
+  constructor(data) {
     super();
 
+    this._data = data;
     this._genres = {};
     this._watchedCount = 0;
     this._totalDuration = 0;
@@ -70,7 +70,7 @@ export default class Statistic extends Component {
 
   _createGenresObject() {
     this._genres = {};
-    filmCardDataList.forEach((currentCard) => {
+    this._data.forEach((currentCard) => {
       currentCard.genre.forEach((currentGenre) => {
         this._genres[currentGenre] = (this._genres[currentGenre] || 0) + 1;
       });
@@ -78,7 +78,7 @@ export default class Statistic extends Component {
   }
 
   _getStatistic() {
-    filmCardDataList.forEach((currentCard) => {
+    this._data.forEach((currentCard) => {
       if (currentCard.isWatched) {
         this._watchedCount++;
         this._totalDuration += +currentCard.duration;

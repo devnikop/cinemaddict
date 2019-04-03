@@ -9,16 +9,17 @@ export default class FilmComponent extends Component {
 
     super();
 
+    this._id = film.id;
     this._title = film.title;
     this._titleOriginal = film.titleOriginal;
     this._averageRating = film.averageRating;
     this._premiereDate = film.premiereDate;
     this._duration = +film.duration;
-    this._genre = film.genre;
+    this._genre = film.genre.length ? film.genre : [`No genre`];
     this._poster = film.poster;
     this._description = film.description;
     this._comments = film.comments;
-    this._commentsCount = film.comments.length;
+    this._commentsCount = this._comments.length;
 
 
     this._state = {
