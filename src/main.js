@@ -2,7 +2,8 @@ import API from './api';
 import FilmCards from './film-cards';
 import Filters from './filters';
 import Statistic from './statistic';
-import {clearContainer, addNodeListInContainer} from './util';
+import {clearContainer, addNodeListInContainer, compare} from './util';
+import _ from '../node_modules/lodash';
 
 const END_POINT = ` https://es8-demo-srv.appspot.com/moowle`;
 const AUTHORIZATION = `Basic dXNlckBwYXNzd29rZAo=${Math.random()}`;
@@ -25,18 +26,13 @@ api.getCards()
     filmsCards = new FilmCards(api);
     const filmCardNodeList = filmsCards.render(cards);
 
-    // NEED TO IMPLEMENT TOP RATED & MOST COMMENTED
-    const topRatedFilmDataList = [];
-    for (let i = 0; i < TOP_RATED_FILM_COUNT; i++) {
-      topRatedFilmDataList.push(filmCardDataList[i]);
-    }
-    const topRatedFilmList = filmsCards.render(topRatedFilmDataList, false);
+    const topRatedFilmDataList = _.cloneDeep(filmCardDataList);
+    topRatedFilmDataList.sort(compare(`averageRating`));
+    const topRatedFilmList = filmsCards.render(topRatedFilmDataList.slice(0, TOP_RATED_FILM_COUNT), false);
 
-    const mostCommentedFilmDataList = [];
-    for (let i = 0; i < MOST_COMMENTED_FILM_COUNT; i++) {
-      mostCommentedFilmDataList.push(filmCardDataList[i]);
-    }
-    const mostCommentedFilmList = filmsCards.render(mostCommentedFilmDataList, false);
+    const mostCommentedFilmDataList = _.cloneDeep(filmCardDataList);
+    mostCommentedFilmDataList.sort(compare(`comments`));
+    const mostCommentedFilmList = filmsCards.render(mostCommentedFilmDataList.slice(0, MOST_COMMENTED_FILM_COUNT), false);
 
     addNodeListInContainer(filmCardNodeList, filmsListContainerElement);
     addNodeListInContainer(topRatedFilmList, topRatedContainerElement);

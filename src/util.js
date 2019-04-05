@@ -23,3 +23,15 @@ export const addNodeListInContainer = (nodeList, container) => {
   }
   container.appendChild(fragment);
 };
+
+export const compare = (key) => {
+  return (a, b) => {
+    if (a[key] > b[key]) {
+      return -1;
+    } else if (a[key] < b[key]) {
+      return 1;
+    } else {
+      return 0;
+    }
+  };
+};
