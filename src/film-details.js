@@ -17,7 +17,7 @@ export default class FilmDetails extends FilmComponent {
 
     this._cardControls = hasControls;
 
-    this._closeButton = null;
+    this._closeButtonElement = null;
     this._commentElement = null;
     this._userRatingContainerElement = null;
 
@@ -201,46 +201,61 @@ export default class FilmDetails extends FilmComponent {
     };
   }
 
-  set onCloseButtonClick(fn) {
-    this._onCloseButton = fn;
+  set onCloseButtonClick(cb) {
+    this._onCloseButton = cb;
   }
 
-  set onCommentEnter(fn) {
-    this._onComment = fn;
+  set onCommentEnter(cb) {
+    this._onComment = cb;
   }
 
-  set onUserRatingClick(fn) {
-    this._onUserRating = fn;
+  set onUserRatingClick(cb) {
+    this._onUserRating = cb;
   }
 
-  set onAddToWatchList(fn) {
-    this._onAddToWatchList = fn;
+  set onAddToWatchList(cb) {
+    this._onAddToWatchList = cb;
   }
 
-  set onMarkAsWatched(fn) {
-    this._onMarkAsWatched = fn;
+  set onMarkAsWatched(cb) {
+    this._onMarkAsWatched = cb;
   }
 
-  set onAddToFavorite(fn) {
-    this._onAddToFavorite = fn;
+  set onAddToFavorite(cb) {
+    this._onAddToFavorite = cb;
   }
 
-  _processNewData(newData) {
-    const entry = {
-      comments: {
-        author: ``,
-        comment: ``,
-        date: new Date(),
-        emotion: ``,
-      },
-      userRating: ``,
-    };
+  bind() {
+    this._closeButtonElement = this.element.querySelector(`.film-details__close-btn`);
+    this._commentElement = this.element.querySelector(`.film-details__comment-input`);
+    this._userRatingContainerElement = this.element.querySelector(`.film-details__user-rating-score`);
+    this._addToWatchlistElement = this.element.querySelector(`.film-details__control-label--watchlist`);
+    this._markAsWatchedElement = this.element.querySelector(`.film-details__control-label--watched`);
+    this._markAsFavoriteElement = this.element.querySelector(`.film-details__control-label--favorite`);
 
-    entry.comments.comment = newData.comment;
-    entry.comments.author = newData.author;
-    entry.comments.date = newData.date;
-    entry.userRating = newData.userRating;
-    return entry;
+    this._closeButtonElement.addEventListener(`click`, this._onCloseButtonClick);
+    this._commentElement.addEventListener(`keydown`, this._onCommentEnter);
+    this._userRatingContainerElement.addEventListener(`click`, this._onUserRatingClick);
+    this._addToWatchlistElement.addEventListener(`click`, this._onAddToWatchListClick);
+    this._markAsWatchedElement.addEventListener(`click`, this._onMarkAsWatchedClick);
+    this._markAsFavoriteElement.addEventListener(`click`, this._onFavoriteClick);
+  }
+
+  unbind() {
+    this._closeButtonElement.removeEventListener(`click`, this._onCloseButtonClick);
+    this._commentElement.removeEventListener(`keydown`, this._onCommentEnter);
+    this._userRatingContainerElement.removeEventListener(`click`, this._onUserRatingClick);
+    this._addToWatchlistElement.removeEventListener(`click`, this._onAddToWatchListClick);
+    this._markAsWatchedElement.removeEventListener(`click`, this._onMarkAsWatchedClick);
+    this._markAsFavoriteElement.removeEventListener(`click`, this._onFavoriteClick);
+  }
+
+  update(newObject) {
+    if (newObject.comments.comment) {
+      this._comments.push(newObject.comments);
+    }
+    this._commentsCount = this._comments.length;
+    this._userRating = newObject.userRating;
   }
 
   _onCloseButtonClick(evt) {
@@ -253,7 +268,7 @@ export default class FilmDetails extends FilmComponent {
   _onCommentEnter(evt) {
     if (evt.key === `Enter`) {
       evt.preventDefault();
-      this.update(this._processNewData(this._newData));
+      this.update(FilmDetails.processNewData(this._newData));
       if (typeof this._onComment === `function`) {
         this._onComment(this._currentData);
       }
@@ -263,7 +278,7 @@ export default class FilmDetails extends FilmComponent {
   _onUserRatingClick(evt) {
     if (evt.target.className === `film-details__user-rating-label`) {
       document.querySelector(`input#${evt.target.htmlFor}`).checked = true;
-      this.update(this._processNewData(this._newData));
+      this.update(FilmDetails.processNewData(this._newData));
       if (typeof this._onUserRating === `function`) {
         this._onUserRating(this._currentData);
       }
@@ -291,36 +306,21 @@ export default class FilmDetails extends FilmComponent {
     }
   }
 
-  bind() {
-    this._closeButton = this.element.querySelector(`.film-details__close-btn`);
-    this._commentElement = this.element.querySelector(`.film-details__comment-input`);
-    this._userRatingContainerElement = this.element.querySelector(`.film-details__user-rating-score`);
-    this._addToWatchlist = this.element.querySelector(`.film-details__control-label--watchlist`);
-    this._markAsWatched = this.element.querySelector(`.film-details__control-label--watched`);
-    this._markAsFavorite = this.element.querySelector(`.film-details__control-label--favorite`);
+  static processNewData(newData) {
+    const entry = {
+      comments: {
+        author: ``,
+        comment: ``,
+        date: new Date(),
+        emotion: ``,
+      },
+      userRating: ``,
+    };
 
-    this._closeButton.addEventListener(`click`, this._onCloseButtonClick);
-    this._commentElement.addEventListener(`keydown`, this._onCommentEnter);
-    this._userRatingContainerElement.addEventListener(`click`, this._onUserRatingClick);
-    this._addToWatchlist.addEventListener(`click`, this._onAddToWatchListClick);
-    this._markAsWatched.addEventListener(`click`, this._onMarkAsWatchedClick);
-    this._markAsFavorite.addEventListener(`click`, this._onFavoriteClick);
-  }
-
-  unbind() {
-    this._closeButton.removeEventListener(`click`, this._onCloseButtonClick);
-    this._commentElement.removeEventListener(`keydown`, this._onCommentEnter);
-    this._userRatingContainerElement.removeEventListener(`click`, this._onUserRatingClick);
-    this._addToWatchlist.removeEventListener(`click`, this._onAddToWatchListClick);
-    this._markAsWatched.removeEventListener(`click`, this._onMarkAsWatchedClick);
-    this._markAsFavorite.removeEventListener(`click`, this._onFavoriteClick);
-  }
-
-  update(newObject) {
-    if (newObject.comments.comment) {
-      this._comments.push(newObject.comments);
-    }
-    this._commentsCount = this._comments.length;
-    this._userRating = newObject.userRating;
+    entry.comments.comment = newData.comment;
+    entry.comments.author = newData.author;
+    entry.comments.date = newData.date;
+    entry.userRating = newData.userRating;
+    return entry;
   }
 }

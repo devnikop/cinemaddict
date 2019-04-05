@@ -15,15 +15,13 @@ const filmsListContainerElement = filmsCommonContainerElement.querySelector(`.fi
 const topRatedContainerElement = filmsCommonContainerElement.querySelector(`.films-list__container--top-rated`);
 const mostCommentedContainerElement = filmsCommonContainerElement.querySelector(`.films-list__container--most-commented`);
 
-let filmCardDataList = [];
-let filmsCards = ``;
 const api = new API(END_POINT, AUTHORIZATION);
 api.getCards()
   .then((cards) => {
     filmsListContainerElement.textContent = ``;
-    filmCardDataList = cards;
+    const filmCardDataList = cards;
 
-    filmsCards = new FilmCards(api);
+    const filmsCards = new FilmCards(api);
     const filmCardNodeList = filmsCards.render(cards);
 
     const topRatedFilmDataList = _.cloneDeep(filmCardDataList);

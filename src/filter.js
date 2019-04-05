@@ -18,15 +18,8 @@ export default class Filter extends Component {
     </a>`;
   }
 
-  set onFilter(fn) {
-    this._onFilter = fn;
-  }
-
-  _onFilterClick(evt) {
-    evt.preventDefault();
-    if (typeof this._onFilter === `function`) {
-      this._onFilter(this._name);
-    }
+  set onFilter(cb) {
+    this._onFilter = cb;
   }
 
   bind() {
@@ -35,5 +28,12 @@ export default class Filter extends Component {
 
   unbind() {
     this.element.removeEventListener(`click`, this._onFilterClick);
+  }
+
+  _onFilterClick(evt) {
+    evt.preventDefault();
+    if (typeof this._onFilter === `function`) {
+      this._onFilter(this._name);
+    }
   }
 }

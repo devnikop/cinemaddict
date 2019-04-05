@@ -1,10 +1,10 @@
 import Filter from './filter';
 
-const filterMap = new Map([
-  [`All movies`, `_getAllList`],
-  [`Watchlist`, `_getOnWatchlist`],
-  [`History`, `_getWatched`],
-  [`Favorites`, `_getFavorites`],
+const FilterMap = new Map([
+  [`All movies`, `_allList`],
+  [`Watchlist`, `_onWatchlist`],
+  [`History`, `_watched`],
+  [`Favorites`, `_favorites`],
 ]);
 
 export default class Filters {
@@ -19,29 +19,29 @@ export default class Filters {
     return this[this._action];
   }
 
-  get _getAllList() {
+  get _allList() {
     return this._data;
   }
 
-  get _getOnWatchlist() {
+  get _onWatchlist() {
     return this._data.filter((currentCard) => currentCard.isOnWatchlist);
   }
 
-  get _getWatched() {
+  get _watched() {
     return this._data.filter((currentCard) => currentCard.isWatched);
   }
 
-  get _getFavorites() {
+  get _favorites() {
     return this._data.filter((currentCard) => currentCard.isFavorite);
   }
 
-  set onFilter(fn) {
-    this._onFilter = fn;
+  set onFilter(cb) {
+    this._onFilter = cb;
   }
 
   _bindHandlers(filterComponent) {
     filterComponent.onFilter = (filter) => {
-      this._action = filterMap.get(filter);
+      this._action = FilterMap.get(filter);
       if (typeof this._onFilter === `function`) {
         this._onFilter();
       }
@@ -51,9 +51,8 @@ export default class Filters {
   render() {
     const mainNavigationContainerElement = document.querySelector(`.main-navigation`);
     let tempFilterContainer = document.createDocumentFragment();
-
-    [...filterMap.keys()].forEach((filterName) => {
-      this._action = filterMap.get(filterName);
+    [...FilterMap.keys()].forEach((filterName) => {
+      this._action = FilterMap.get(filterName);
       const filteredCardCount = this[this._action].length;
       const filterComponent = new Filter(filterName, filteredCardCount);
       this._bindHandlers(filterComponent);

@@ -91,10 +91,10 @@ export default class Statistic extends Component {
 
   _createStatistics() {
     this._createGenresObject();
-    const statisticCtx = this.element.querySelector(`.statistic__chart`);
-    statisticCtx.height = BAR_HEIGHT * [...Object.keys(this._genres)].length;
+    const statisticCtxElement = this.element.querySelector(`.statistic__chart`);
+    statisticCtxElement.height = BAR_HEIGHT * [...Object.keys(this._genres)].length;
     // eslint-disable-next-line no-unused-vars
-    const myChart = new Chart(statisticCtx, {
+    const myChart = new Chart(statisticCtxElement, {
       plugins: [ChartDataLabels],
       type: `horizontalBar`,
       data: {
@@ -152,12 +152,6 @@ export default class Statistic extends Component {
     });
   }
 
-  _onStatisticClick() {
-    document.querySelector(`.films`).classList.add(`visually-hidden`);
-    this.element.classList.remove(`visually-hidden`);
-    this._createStatistics();
-  }
-
   bind() {
     this._statisticButtonElement = document.querySelector(`.main-navigation__item--additional`);
     this._statisticButtonElement.addEventListener(`click`, this._onStatisticClick);
@@ -165,5 +159,12 @@ export default class Statistic extends Component {
 
   unbind() {
     this._statisticButtonElement.removeEventListener(`click`, this._onStatisticClick);
+  }
+
+  _onStatisticClick(evt) {
+    evt.preventDefault();
+    document.querySelector(`.films`).classList.add(`visually-hidden`);
+    this.element.classList.remove(`visually-hidden`);
+    this._createStatistics();
   }
 }

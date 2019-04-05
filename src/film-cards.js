@@ -106,8 +106,7 @@ export default class FilmCards {
 
   render(filmCardDataList, controls = true) {
     const filmCardList = [];
-    for (let i = 0; i < filmCardDataList.length; i++) {
-      const currentFilmCardData = filmCardDataList[i];
+    for (const currentFilmCardData of filmCardDataList) {
       const film = new FilmCard(_.cloneDeep(currentFilmCardData), controls);
       filmCardList.push(film.render());
       this._bindDetails(film, currentFilmCardData);
