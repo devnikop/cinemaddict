@@ -1,19 +1,38 @@
 import Filter from './filter';
-import {getRandomInt} from './util';
 
-const FILM_COUNT_MIN = 1;
-const FILM_COUNT_MAX = 7;
-
-const FilterName = new Set([
-  `All movies`,
-  `Watchlist`,
-  `History`,
-  `Favorites`,
+const filterMap = new Map([
+  [`All movies`, `_getAllList`],
+  [`Watchlist`, `_getOnWatchlist`],
+  [`History`, `_getWatched`],
+  [`Favorites`, `_getFavorites`],
 ]);
 
 export default class Filters {
-  constructor() {
+  constructor(filmCardDataList) {
+    this._data = filmCardDataList;
+
     this._onFilter = null;
+    this._action = null;
+  }
+
+  get filterFilmCards() {
+    return this[this._action];
+  }
+
+  get _getAllList() {
+    return this._data;
+  }
+
+  get _getOnWatchlist() {
+    return this._data.filter((currentCard) => currentCard.isOnWatchlist);
+  }
+
+  get _getWatched() {
+    return this._data.filter((currentCard) => currentCard.isWatched);
+  }
+
+  get _getFavorites() {
+    return this._data.filter((currentCard) => currentCard.isFavorite);
   }
 
   set onFilter(fn) {
@@ -21,19 +40,25 @@ export default class Filters {
   }
 
   _bindHandlers(filterComponent) {
-    filterComponent.onFilter = (filterName) => {
-      this._onFilter(filterName);
+    filterComponent.onFilter = (filter) => {
+      this._action = filterMap.get(filter);
+      if (typeof this._onFilter === `function`) {
+        this._onFilter();
+      }
     };
   }
 
   render() {
     const mainNavigationContainerElement = document.querySelector(`.main-navigation`);
     let tempFilterContainer = document.createDocumentFragment();
-    for (let i = 0; i < FilterName.size; i++) {
-      const filterComponent = new Filter([...FilterName][i], getRandomInt(FILM_COUNT_MIN, FILM_COUNT_MAX));
+
+    [...filterMap.keys()].forEach((filterName) => {
+      this._action = filterMap.get(filterName);
+      const filteredCardCount = this[this._action].length;
+      const filterComponent = new Filter(filterName, filteredCardCount);
       this._bindHandlers(filterComponent);
       tempFilterContainer.appendChild(filterComponent.render());
-    }
+    });
 
     mainNavigationContainerElement.insertBefore(tempFilterContainer, mainNavigationContainerElement.firstChild);
   }
