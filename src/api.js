@@ -53,7 +53,7 @@ export default class API {
       .then(ModelCard.parseCard)
       .catch((error) => {
         // eslint-disable-next-line no-console
-        console.error(`fetch error: ${error}`);
+        // console.error(`fetch error: ${error}`);
         throw error;
       });
   }
@@ -72,7 +72,7 @@ export default class API {
       .then(checkStatus)
       .catch((error) => {
         // eslint-disable-next-line no-console
-        console.error(`fetch error: ${error}`);
+        // console.error(`fetch error: ${error}`);
         throw error;
       });
   }
