@@ -93,8 +93,7 @@ export default class Statistic extends Component {
     this._createGenresObject();
     const statisticCtxElement = this.element.querySelector(`.statistic__chart`);
     statisticCtxElement.height = BAR_HEIGHT * [...Object.keys(this._genres)].length;
-    // eslint-disable-next-line
-    new Chart(statisticCtxElement, {
+    return new Chart(statisticCtxElement, {
       plugins: [ChartDataLabels],
       type: `horizontalBar`,
       data: {
