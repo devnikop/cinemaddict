@@ -1,4 +1,6 @@
 import API from './api';
+import {Provider} from './provider';
+import {Store} from './store';
 import FilmCards from './film-cards';
 import Filters from './filters';
 import Statistic from './statistic';
@@ -6,9 +8,12 @@ import {clearContainer, addNodeListInContainer, compare} from './util';
 import _ from '../node_modules/lodash';
 
 const END_POINT = ` https://es8-demo-srv.appspot.com/moowle`;
-const AUTHORIZATION = `Basic dXNlckBwYXNzd29rZAo=${Math.random()}`;
+const AUTHORIZATION = `Basic dXNlckBwYXNzd29rZAo5`;
+const CARDS_STORE_KEY = `cards-store-key`;
 const TOP_RATED_FILM_COUNT = 2;
 const MOST_COMMENTED_FILM_COUNT = 2;
+
+const generateId = () => String(Date.now() + Math.random());
 
 const filmsCommonContainerElement = document.querySelector(`.films`);
 const filmsListContainerElement = filmsCommonContainerElement.querySelector(`.films-list .films-list__container`);
@@ -16,12 +21,15 @@ const topRatedContainerElement = filmsCommonContainerElement.querySelector(`.fil
 const mostCommentedContainerElement = filmsCommonContainerElement.querySelector(`.films-list__container--most-commented`);
 
 const api = new API(END_POINT, AUTHORIZATION);
-api.getCards()
+const store = new Store({key: CARDS_STORE_KEY, storage: localStorage});
+const provider = new Provider({api, store, cardId: generateId()});
+
+provider.getCards()
   .then((cards) => {
     filmsListContainerElement.textContent = ``;
     const filmCardDataList = cards;
 
-    const filmsCards = new FilmCards(api);
+    const filmsCards = new FilmCards(provider);
     const filmCardNodeList = filmsCards.render(cards);
 
     const topRatedFilmDataList = _.cloneDeep(filmCardDataList);
@@ -53,3 +61,11 @@ api.getCards()
   .catch(() => {
     filmsListContainerElement.textContent = `Something went wrong while loading movies. Check your connection or try again later`;
   });
+
+window.addEventListener(`offline`, () => {
+  document.title = `${document.title}[OFFLINE]`;
+});
+window.addEventListener(`online`, () => {
+  document.title = document.title.split(`[OFFLINE]`)[0];
+  provider.syncCards();
+});

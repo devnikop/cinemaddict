@@ -23,15 +23,6 @@ export default class API {
     this._authorization = authorization;
   }
 
-  getCards() {
-    return this._load({url: `movies`})
-      .then(toJSON)
-      .then(ModelCard.parseCards)
-      .catch((error) => {
-        throw error;
-      });
-  }
-
   createCard({card}) {
     return this._load({
       url: `movies`,
@@ -40,6 +31,15 @@ export default class API {
       headers: new Headers({'Content-Type': `application/json`})
     })
       .then(toJSON);
+  }
+
+  getCards() {
+    return this._load({url: `movies`})
+      .then(toJSON)
+      .then(ModelCard.parseCards)
+      .catch((error) => {
+        throw error;
+      });
   }
 
   updateCard({id, data}) {
@@ -53,7 +53,7 @@ export default class API {
       .then(ModelCard.parseCard)
       .catch((error) => {
         // eslint-disable-next-line
-        // console.error(`fetch error: ${error}`);
+        console.error(`fetch error: ${error}`);
         throw error;
       });
   }
@@ -65,6 +65,16 @@ export default class API {
     });
   }
 
+  syncCards(cards) {
+    return this._load({
+      url: `movies/sync`,
+      method: Method.POST,
+      body: JSON.stringify(cards),
+      headers: new Headers({'Content-Type': `application/json`})
+    })
+    .then(toJSON);
+  }
+
   _load({url, method = Method.GET, body = null, headers = new Headers()}) {
     headers.append(`Authorization`, this._authorization);
 
@@ -72,7 +82,7 @@ export default class API {
       .then(checkStatus)
       .catch((error) => {
         // eslint-disable-next-line
-        // console.error(`fetch error: ${error}`);
+        console.error(`fetch error: ${error}`);
         throw error;
       });
   }
