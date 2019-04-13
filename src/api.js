@@ -1,5 +1,10 @@
 import ModelCard from "./model_card";
 
+const HttpStatus = {
+  OK: 200,
+  MultipleChoice: 300,
+};
+
 const Method = {
   GET: `GET`,
   POST: `POST`,
@@ -8,7 +13,7 @@ const Method = {
 };
 
 const checkStatus = (responce) => {
-  if (responce.status >= 200 && responce.status < 300) {
+  if (responce.status >= HttpStatus.OK && responce.status < HttpStatus.MultipleChoice) {
     return responce;
   } else {
     throw new Error(`${responce.status}: ${responce.statusText}`);
