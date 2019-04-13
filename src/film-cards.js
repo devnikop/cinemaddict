@@ -39,21 +39,23 @@ export default class FilmCards {
   }
 
   _bindHandlers(filmDetails, film, currentFilmCardData) {
-    const _updateDetails = (newData) => {
+    const _updateDetails = (newData, eventType = ``) => {
       Object.assign(currentFilmCardData, newData);
       this._api.updateCard({id: currentFilmCardData.id, data: currentFilmCardData.toRAW()})
         .then((newCard) => {
           const currentFilmDetails = filmDetails.element;
+          filmDetails.update(currentFilmCardData);
           document.body.replaceChild(filmDetails.render(), currentFilmDetails);
           const updatedCurrentData = Object.assign(currentFilmCardData, newCard);
           film.update(_.cloneDeep(updatedCurrentData));
         })
         .then(() => {
-          if (this._commentInputElement) {
-            this._commentInputElement.disabled = false;
-          }
-          if (this._commentInputElement) {
-            this._commentInputElement.disabled = false;
+          if (eventType === `onCommentEnter`) {
+            filmDetails.element.querySelector(`.film-details__watched-status`).textContent = `Comment added`;
+            filmDetails.element.querySelector(`.film-details__watched-reset`).classList.remove(`visually-hidden`);
+          } else if (eventType === `onCommentReset`) {
+            filmDetails.element.querySelector(`.film-details__watched-status`).textContent = `Comment deleted`;
+            filmDetails.element.querySelector(`.film-details__watched-reset`).classList.add(`visually-hidden`);
           }
         })
         .catch(() => {
@@ -61,28 +63,39 @@ export default class FilmCards {
         });
     };
 
-    filmDetails.onCloseButtonClick = () => {
+    filmDetails.onClose = () => {
       filmDetails.unrender();
       film.update(_.cloneDeep(currentFilmCardData));
       const currentFilmCard = film.element;
       document.querySelector(`.films-list__container`).replaceChild(film.render(), currentFilmCard);
     };
+
     filmDetails.onCommentEnter = (newData) => {
       this._blockForm(filmDetails);
-      _updateDetails(newData);
+      _updateDetails(newData, `onCommentEnter`);
     };
+
     filmDetails.onUserRatingClick = (newData) => {
       this._blockForm(filmDetails);
       _updateDetails(newData);
     };
+
     filmDetails.onAddToWatchList = (newState) => {
       currentFilmCardData.isOnWatchlist = newState;
     };
+
     filmDetails.onMarkAsWatched = (newState) => {
       currentFilmCardData.isWatched = newState;
     };
+
     filmDetails.onAddToFavorite = (newState) => {
       currentFilmCardData.isFavorite = newState;
+    };
+
+    filmDetails.onCommentReset = () => {
+      this._blockForm(filmDetails);
+      currentFilmCardData.comments.pop();
+      _updateDetails(currentFilmCardData, `onCommentReset`);
     };
   }
 

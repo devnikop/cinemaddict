@@ -8,7 +8,7 @@ import {clearContainer, addNodeListInContainer, compare} from './util';
 import _ from '../node_modules/lodash';
 
 const END_POINT = ` https://es8-demo-srv.appspot.com/moowle`;
-const AUTHORIZATION = `Basic dXNlckBwYXNzd29rZAo5`;
+const AUTHORIZATION = `Basic dXNlckBwYXNzd29rZAo54`;
 const CARDS_STORE_KEY = `cards-store-key`;
 const TOP_RATED_FILM_COUNT = 2;
 const MOST_COMMENTED_FILM_COUNT = 2;
