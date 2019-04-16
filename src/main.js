@@ -4,11 +4,11 @@ import {Store} from './store';
 import FilmCards from './film-cards';
 import Filters from './filters';
 import Statistic from './statistic';
-import {clearContainer, addNodeListInContainer, compare} from './util';
+import {clearContainer, addNodeListInContainer, compare, setUserRank} from './util';
 import _ from '../node_modules/lodash';
 
 const END_POINT = ` https://es8-demo-srv.appspot.com/moowle`;
-const AUTHORIZATION = `Basic dXNlckBwYXNzd29rZAo54`;
+const AUTHORIZATION = `Basic dXNlckBwYXNzd29rZAo154`;
 const CARDS_STORE_KEY = `cards-store-key`;
 const TOP_RATED_FILM_COUNT = 2;
 const MOST_COMMENTED_FILM_COUNT = 2;
@@ -31,6 +31,10 @@ provider.getCards()
 
     const filmsCards = new FilmCards(provider);
     const filmCardNodeList = filmsCards.render(cards);
+
+    filmsCards.onUserRank = () => {
+      setUserRank(filmCardDataList);
+    };
 
     const topRatedFilmDataList = _.cloneDeep(filmCardDataList);
     topRatedFilmDataList.sort(compare(`averageRating`));
@@ -55,10 +59,14 @@ provider.getCards()
     };
     filters.render();
 
+    setUserRank(filmCardDataList);
+
     const statisticComponent = new Statistic(filmCardDataList);
     document.querySelector(`main`).appendChild(statisticComponent.render());
   })
-  .catch(() => {
+  .catch((error) => {
+    // eslint-disable-next-line
+    console.error(`fetch error: ${error}`);
     filmsListContainerElement.textContent = `Something went wrong while loading movies. Check your connection or try again later`;
   });
 

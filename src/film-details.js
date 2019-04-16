@@ -205,6 +205,9 @@ export default class FilmDetails extends FilmComponent {
     return {
       comments: this._comments,
       userRating: this._userRating,
+      isOnWatchlist: this._state._isOnWatchlist,
+      isWatched: this._state._isWatched,
+      isFavorite: this._state._isFavorite,
     };
   }
 
@@ -314,21 +317,21 @@ export default class FilmDetails extends FilmComponent {
   _onAddToWatchListClick() {
     if (typeof this._onAddToWatchList === `function`) {
       this._state._isOnWatchlist = !this._state._isOnWatchlist;
-      this._onAddToWatchList(this._state._isOnWatchlist);
+      this._onAddToWatchList(this._currentData);
     }
   }
 
   _onMarkAsWatchedClick() {
     if (typeof this._onMarkAsWatched === `function`) {
       this._state._isWatched = !this._state._isWatched;
-      this._onMarkAsWatched(this._state._isWatched);
+      this._onMarkAsWatched(this._currentData);
     }
   }
 
   _onFavoriteClick() {
     if (typeof this._onAddToFavorite === `function`) {
       this._state._isFavorite = !this._state._isFavorite;
-      this._onAddToFavorite(this._state._isFavorite);
+      this._onAddToFavorite(this._currentData);
     }
   }
 

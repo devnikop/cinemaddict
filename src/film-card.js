@@ -87,6 +87,9 @@ export default class FilmCard extends FilmComponent {
 
   update(newData) {
     this._commentsCount = newData.comments.length;
+    this._state._isOnWatchlist = newData.isOnWatchlist;
+    this._state._isWatched = newData.isWatched;
+    this._state._isFavorite = newData.isFavorite;
   }
 
   _onCommentsClick(evt) {
