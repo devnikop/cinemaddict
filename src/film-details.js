@@ -20,20 +20,27 @@ export default class FilmDetails extends FilmComponent {
     this._closeButtonElement = null;
     this._commentElement = null;
     this._userRatingContainerElement = null;
+    this._addToWatchlistElement = null;
+    this._markAsWatchedElement = null;
+    this._markAsFavoriteElement = null;
+    this._commentResetButtonElement = null;
 
+    this._onEscapeClick = this._onEscapeClick.bind(this);
     this._onCloseButtonClick = this._onCloseButtonClick.bind(this);
     this._onCommentEnter = this._onCommentEnter.bind(this);
     this._onUserRatingClick = this._onUserRatingClick.bind(this);
     this._onAddToWatchListClick = this._onAddToWatchListClick.bind(this);
     this._onMarkAsWatchedClick = this._onMarkAsWatchedClick.bind(this);
     this._onFavoriteClick = this._onFavoriteClick.bind(this);
+    this._onCommentResetClick = this._onCommentResetClick.bind(this);
 
-    this._onCloseButton = null;
+    this._onClose = null;
     this._onComment = null;
     this._onUserRating = null;
     this._onAddToWatchList = null;
     this._onMarkAsWatched = null;
     this._onAddToFavorite = null;
+    this._onCommentReset = null;
   }
 
   get template() {
@@ -155,8 +162,8 @@ export default class FilmDetails extends FilmComponent {
 
         <section class="film-details__user-rating-wrap">
           <div class="film-details__user-rating-controls">
-            <span class="film-details__watched-status film-details__watched-status--active">Already watched</span>
-            <button class="film-details__watched-reset" type="button">undo</button>
+            <span class="film-details__watched-status film-details__watched-status--active"></span>
+            <button class="film-details__watched-reset visually-hidden" type="button">undo</button>
           </div>
 
           <div class="film-details__user-score">
@@ -198,11 +205,14 @@ export default class FilmDetails extends FilmComponent {
     return {
       comments: this._comments,
       userRating: this._userRating,
+      isOnWatchlist: this._state._isOnWatchlist,
+      isWatched: this._state._isWatched,
+      isFavorite: this._state._isFavorite,
     };
   }
 
-  set onCloseButtonClick(cb) {
-    this._onCloseButton = cb;
+  set onClose(cb) {
+    this._onClose = cb;
   }
 
   set onCommentEnter(cb) {
@@ -225,6 +235,10 @@ export default class FilmDetails extends FilmComponent {
     this._onAddToFavorite = cb;
   }
 
+  set onCommentReset(cb) {
+    this._onCommentReset = cb;
+  }
+
   bind() {
     this._closeButtonElement = this.element.querySelector(`.film-details__close-btn`);
     this._commentElement = this.element.querySelector(`.film-details__comment-input`);
@@ -232,22 +246,27 @@ export default class FilmDetails extends FilmComponent {
     this._addToWatchlistElement = this.element.querySelector(`.film-details__control-label--watchlist`);
     this._markAsWatchedElement = this.element.querySelector(`.film-details__control-label--watched`);
     this._markAsFavoriteElement = this.element.querySelector(`.film-details__control-label--favorite`);
+    this._commentResetButtonElement = this.element.querySelector(`.film-details__watched-reset`);
 
+    window.addEventListener(`keydown`, this._onEscapeClick);
     this._closeButtonElement.addEventListener(`click`, this._onCloseButtonClick);
     this._commentElement.addEventListener(`keydown`, this._onCommentEnter);
     this._userRatingContainerElement.addEventListener(`click`, this._onUserRatingClick);
     this._addToWatchlistElement.addEventListener(`click`, this._onAddToWatchListClick);
     this._markAsWatchedElement.addEventListener(`click`, this._onMarkAsWatchedClick);
     this._markAsFavoriteElement.addEventListener(`click`, this._onFavoriteClick);
+    this._commentResetButtonElement.addEventListener(`click`, this._onCommentResetClick);
   }
 
   unbind() {
+    window.removeEventListener(`keydown`, this._onEscapeClick);
     this._closeButtonElement.removeEventListener(`click`, this._onCloseButtonClick);
     this._commentElement.removeEventListener(`keydown`, this._onCommentEnter);
     this._userRatingContainerElement.removeEventListener(`click`, this._onUserRatingClick);
     this._addToWatchlistElement.removeEventListener(`click`, this._onAddToWatchListClick);
     this._markAsWatchedElement.removeEventListener(`click`, this._onMarkAsWatchedClick);
     this._markAsFavoriteElement.removeEventListener(`click`, this._onFavoriteClick);
+    this._commentResetButtonElement.removeEventListener(`click`, this._onCommentResetClick);
   }
 
   update(newObject) {
@@ -258,11 +277,21 @@ export default class FilmDetails extends FilmComponent {
     this._userRating = newObject.userRating;
   }
 
+  _onPopupClose() {
+    if (typeof this._onClose === `function`) {
+      this._onClose(this._currentData);
+    }
+  }
+
+  _onEscapeClick(evt) {
+    if (evt.key === `Escape`) {
+      this._onPopupClose();
+    }
+  }
+
   _onCloseButtonClick(evt) {
     evt.preventDefault();
-    if (typeof this._onCloseButton === `function`) {
-      this._onCloseButton(this._currentData);
-    }
+    this._onPopupClose();
   }
 
   _onCommentEnter(evt) {
@@ -288,21 +317,31 @@ export default class FilmDetails extends FilmComponent {
   _onAddToWatchListClick() {
     if (typeof this._onAddToWatchList === `function`) {
       this._state._isOnWatchlist = !this._state._isOnWatchlist;
-      this._onAddToWatchList(this._state._isOnWatchlist);
+      this._onAddToWatchList(this._currentData);
     }
   }
 
   _onMarkAsWatchedClick() {
     if (typeof this._onMarkAsWatched === `function`) {
       this._state._isWatched = !this._state._isWatched;
-      this._onMarkAsWatched(this._state._isWatched);
+      if (this._state._isWatched) {
+        // this._watchingDate = +moment();
+      }
+      this._onMarkAsWatched(this._currentData);
     }
   }
 
   _onFavoriteClick() {
     if (typeof this._onAddToFavorite === `function`) {
       this._state._isFavorite = !this._state._isFavorite;
-      this._onAddToFavorite(this._state._isFavorite);
+      this._onAddToFavorite(this._currentData);
+    }
+  }
+
+  _onCommentResetClick() {
+    this._comments.pop();
+    if (typeof this._onCommentReset === `function`) {
+      this._onCommentReset();
     }
   }
 
