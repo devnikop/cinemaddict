@@ -8,7 +8,7 @@ import {clearContainer, addNodeListInContainer, compare, setUserRank} from './ut
 import _ from '../node_modules/lodash';
 
 const END_POINT = ` https://es8-demo-srv.appspot.com/moowle`;
-const AUTHORIZATION = `Basic dXNlckBwYXNzd29rZAo154`;
+const AUTHORIZATION = `Basic dXNlckBwYXNzd29rZAo154u`;
 const CARDS_STORE_KEY = `cards-store-key`;
 const TOP_RATED_FILM_COUNT = 2;
 const MOST_COMMENTED_FILM_COUNT = 2;
@@ -33,7 +33,7 @@ provider.getCards()
     const filmCardNodeList = filmsCards.render(cards);
 
     filmsCards.onUserRank = () => {
-      setUserRank(filmCardDataList);
+      document.querySelector(`.profile__rating`).textContent = setUserRank(filmCardDataList);
     };
 
     const topRatedFilmDataList = _.cloneDeep(filmCardDataList);
@@ -59,9 +59,12 @@ provider.getCards()
     };
     filters.render();
 
-    setUserRank(filmCardDataList);
+    document.querySelector(`.profile__rating`).textContent = setUserRank(filmCardDataList);
 
     const statisticComponent = new Statistic(filmCardDataList);
+    statisticComponent.calculateUserRank(filmCardDataList);
+    statisticComponent.countSimilarGenres();
+    statisticComponent.getStatistic();
     document.querySelector(`main`).appendChild(statisticComponent.render());
   })
   .catch((error) => {

@@ -28,6 +28,7 @@ export default class ModelCard {
     this.comments = this.comments[0];
 
     this.isWatched = data[`user_details`][`already_watched`];
+    this.watchingDate = data[`user_details`][`watching_date`] || 0;
     this.isFavorite = data[`user_details`][`favorite`];
     this.isOnWatchlist = data[`user_details`][`watchlist`];
     this.userRating = data[`user_details`][`personal_rating`];
@@ -58,6 +59,7 @@ export default class ModelCard {
       'comments': this.comments,
       'user_details': {
         'already_watched': this.isWatched,
+        'watching_date': this.watchingDate,
         'favorite': this.isFavorite,
         'watchlist': this.isOnWatchlist,
         'personal_rating': this.userRating,

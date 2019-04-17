@@ -324,6 +324,9 @@ export default class FilmDetails extends FilmComponent {
   _onMarkAsWatchedClick() {
     if (typeof this._onMarkAsWatched === `function`) {
       this._state._isWatched = !this._state._isWatched;
+      if (this._state._isWatched) {
+        // this._watchingDate = +moment();
+      }
       this._onMarkAsWatched(this._currentData);
     }
   }

@@ -20,7 +20,7 @@ export default class FilmComponent extends Component {
     this._description = film.description;
     this._comments = film.comments;
     this._commentsCount = this._comments.length;
-
+    this._watchingDate = film.watchingDate;
 
     this._state = {
       _isOnWatchlist: film.isOnWatchlist,

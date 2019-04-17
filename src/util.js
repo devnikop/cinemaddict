@@ -68,5 +68,5 @@ export const setUserRank = (filmCardDataList) => {
   } else if (watchedCount >= Rank[`MOVIE BUFF`][`MIN`]) {
     userRank = `movie buff`;
   }
-  document.querySelector(`.profile__rating`).textContent = userRank;
+  return userRank;
 };
