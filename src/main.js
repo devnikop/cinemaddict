@@ -3,6 +3,7 @@ import {Provider} from './provider';
 import {Store} from './store';
 import FilmCards from './film-cards';
 import Filters from './filters';
+import {Search} from './search';
 import Statistic from './statistic';
 import {clearContainer, addNodeListInContainer, compare, setUserRank} from './util';
 import _ from '../node_modules/lodash';
@@ -58,6 +59,17 @@ provider.getCards()
       addNodeListInContainer(filteredCards, filmsListContainerElement);
     };
     filters.render();
+
+    const searchComponent = new Search();
+    searchComponent.onSearch = (value) => {
+      const filteredDataList = filmCardDataList.filter((currentCard) => {
+        return currentCard.title.toLowerCase().includes(value);
+      });
+      const filteredCardNodeList = filmsCards.render(filteredDataList);
+      filmsListContainerElement.textContent = ``;
+      addNodeListInContainer(filteredCardNodeList, filmsListContainerElement);
+    };
+    document.querySelector(`.search`).appendChild(searchComponent.render());
 
     document.querySelector(`.profile__rating`).textContent = setUserRank(filmCardDataList);
 
