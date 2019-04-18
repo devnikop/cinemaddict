@@ -1,6 +1,8 @@
 import FilmComponent from './film-component';
 import moment from '../node_modules/moment';
 
+const SHORT_DESCRIPTION_LENGTH = 140;
+
 export default class FilmCard extends FilmComponent {
   constructor(film, controls = true) {
     super(film);
@@ -32,7 +34,7 @@ export default class FilmCard extends FilmComponent {
         <span class="film-card__genre">${this._genre[0]}</span>
       </p>
       <img src="${this._poster}" alt="" class="film-card__poster">
-      <p class="film-card__description">${this._description}</p>
+      <p class="film-card__description">${this._getShortDescription(this._description)}</p>
       <button class="film-card__comments">${this._commentsCount} comments</button>
 
       ${this._controls ? `
@@ -58,6 +60,11 @@ export default class FilmCard extends FilmComponent {
 
   set onAddToFavorite(cb) {
     this._onAddToFavorite = cb;
+  }
+
+  _getShortDescription(description) {
+    const shortDescription = description.substring(0, SHORT_DESCRIPTION_LENGTH);
+    return description === shortDescription ? shortDescription : `${shortDescription}...`;
   }
 
   bind() {
