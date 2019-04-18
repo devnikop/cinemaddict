@@ -58,7 +58,7 @@ export default class FilmCards {
     }
   }
 
-  _bindHandlers(filmDetailsComponent, filmComponent, currentFilmCardData) {
+  _bindFilmDetailsHandlers(filmDetailsComponent, filmComponent, currentFilmCardData) {
     const _updateDetails = (newData, eventType = ``) => {
       Object.assign(currentFilmCardData, newData);
       this._api.updateCard({id: currentFilmCardData.id, data: currentFilmCardData.toRAW()})
@@ -125,7 +125,7 @@ export default class FilmCards {
     };
   }
 
-  _bindDetails(filmComponent, currentFilmCardData) {
+  _bindFilmCardHandlers(filmComponent, currentFilmCardData) {
     const _updateData = () => {
       this._api.updateCard({id: currentFilmCardData.id, data: currentFilmCardData.toRAW()})
         .then((newCard) => {
@@ -136,17 +136,6 @@ export default class FilmCards {
         });
     };
 
-    let filmDetailsComponent;
-    filmComponent.onCommentsClick = () => {
-      if (typeof filmDetailsComponent !== `undefined`) {
-        filmDetailsComponent.unrender();
-        filmDetailsComponent = undefined;
-      }
-      filmDetailsComponent = new FilmDetails(_.cloneDeep(currentFilmCardData));
-      const filmDetailsNode = filmDetailsComponent.render();
-      this._bindHandlers(filmDetailsComponent, filmComponent, currentFilmCardData);
-      document.body.appendChild(filmDetailsNode);
-    };
     filmComponent.onAddToWatchList = (newState) => {
       currentFilmCardData.isOnWatchlist = newState;
       _updateData();
@@ -162,6 +151,21 @@ export default class FilmCards {
       currentFilmCardData.isFavorite = newState;
       _updateData();
     };
+  }
+
+  _bindDetails(filmComponent, currentFilmCardData) {
+    let filmDetailsComponent;
+    filmComponent.onCommentsClick = () => {
+      if (typeof filmDetailsComponent !== `undefined`) {
+        filmDetailsComponent.unrender();
+        filmDetailsComponent = undefined;
+      }
+      filmDetailsComponent = new FilmDetails(_.cloneDeep(currentFilmCardData));
+      const filmDetailsNode = filmDetailsComponent.render();
+      this._bindFilmDetailsHandlers(filmDetailsComponent, filmComponent, currentFilmCardData);
+      document.body.appendChild(filmDetailsNode);
+    };
+    this._bindFilmCardHandlers(filmComponent, currentFilmCardData);
   }
 
   render(filmCardDataList, controls = true) {
