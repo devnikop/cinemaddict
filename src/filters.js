@@ -53,7 +53,7 @@ export default class Filters {
     let tempFilterContainer = document.createDocumentFragment();
     [...FilterMap.keys()].forEach((filterName) => {
       this._action = FilterMap.get(filterName);
-      const filteredCardCount = this[this._action].length;
+      const filteredCardCount = this._action !== FilterMap.get(`All movies`) ? this[this._action].length : 0;
       const filterComponent = new Filter(filterName, filteredCardCount);
       this._bindHandlers(filterComponent);
       tempFilterContainer.appendChild(filterComponent.render());

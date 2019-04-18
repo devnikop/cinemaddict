@@ -6,7 +6,7 @@ import Filters from './filters';
 import {Search} from './search';
 import {ShowMore} from './show-more';
 import Statistic from './statistic';
-import {clearContainer, addNodeListInContainer, compare, setUserRank} from './util';
+import {addNodeListInContainer, compare, setUserRank} from './util';
 import _ from '../node_modules/lodash';
 
 const END_POINT = ` https://es8-demo-srv.appspot.com/moowle`;
@@ -19,7 +19,18 @@ const FILM_COUNT_STEP = 5;
 
 const generateId = () => String(Date.now() + Math.random());
 
-let showMoreComponent;
+const getTopRatedFilmList = (filmCardDataList, filmsCardsComponent) => {
+  filmCardDataList.sort(compare(`averageRating`));
+  const topRatedFilmList = filmsCardsComponent.render(filmCardDataList.slice(0, TOP_RATED_FILM_COUNT), false);
+  return topRatedFilmList;
+};
+
+const getMostCommentedFilmList = (filmCardDataList, filmsCardsComponent) => {
+  filmCardDataList.sort(compare(`comments`));
+  const mostCommentedFilmList = filmsCardsComponent.render(filmCardDataList.slice(0, MOST_COMMENTED_FILM_COUNT), false);
+  return mostCommentedFilmList;
+};
+
 const addShowMoreComponent = (nodeList) => {
   if (typeof showMoreComponent !== `undefined`) {
     showMoreComponent.unrender();
@@ -40,73 +51,86 @@ const addShowMoreComponent = (nodeList) => {
   }
 };
 
-const filmsCommonContainerElement = document.querySelector(`.films`);
-const filmsListWrapperElement = filmsCommonContainerElement.querySelector(`.films-list`);
-const filmsListContainerElement = filmsCommonContainerElement.querySelector(`.films-list .films-list__container`);
-const topRatedContainerElement = filmsCommonContainerElement.querySelector(`.films-list__container--top-rated`);
-const mostCommentedContainerElement = filmsCommonContainerElement.querySelector(`.films-list__container--most-commented`);
+const addSearchComponent = (filmCardDataList, filmsCardsComponent, filmsListContainerElement) => {
+  const searchComponent = new Search();
+  searchComponent.onSearch = (value) => {
+    const filteredDataList = filmCardDataList.filter((currentCard) => {
+      return currentCard.title.toLowerCase().includes(value);
+    });
+    const filteredCardNodeList = filmsCardsComponent.render(filteredDataList);
+    filmsListContainerElement.textContent = ``;
+    addNodeListInContainer(filteredCardNodeList.slice(0, INITIAL_FILM_COUNT), filmsListContainerElement);
+    addShowMoreComponent(filteredCardNodeList);
+  };
+  document.querySelector(`.search`).appendChild(searchComponent.render());
+};
+
+const addUserRank = (filmCardDataList) => {
+  document.querySelector(`.profile__rating`).textContent = setUserRank(filmCardDataList);
+};
+
+const addFooterStatistic = (filmCardDataList) => {
+  document.querySelector(`.footer__statistics p`).textContent = `${filmCardDataList.length} movies inside`;
+};
+
+const addStatisticComponent = (filmCardDataList) => {
+  const statisticComponent = new Statistic(filmCardDataList);
+  statisticComponent.calculateUserRank(filmCardDataList);
+  statisticComponent.countSimilarGenres();
+  statisticComponent.getStatistic();
+  document.querySelector(`main`).appendChild(statisticComponent.render());
+  return statisticComponent;
+};
+
+const addFiltersComponent = (filmCardDataList, statisticComponent, filmsCardsComponent) => {
+  const filters = new Filters(filmCardDataList);
+  filters.onFilter = () => {
+    filmsContainerElement.classList.remove(`visually-hidden`);
+    statisticComponent.element.classList.add(`visually-hidden`);
+    filmsListContainerElement.textContent = ``;
+    const filteredDataList = filters.filterFilmCards;
+    const filteredCards = filmsCardsComponent.render(filteredDataList);
+    addNodeListInContainer(filteredCards.slice(0, INITIAL_FILM_COUNT), filmsListContainerElement);
+    addShowMoreComponent(filteredCards);
+  };
+  filters.render();
+};
+
+const filmsContainerElement = document.querySelector(`.films`);
+const filmsListWrapperElement = filmsContainerElement.querySelector(`.films-list`);
+const filmsListContainerElement = filmsContainerElement.querySelector(`.films-list .films-list__container`);
+const topRatedContainerElement = filmsContainerElement.querySelector(`.films-list__container--top-rated`);
+const mostCommentedContainerElement = filmsContainerElement.querySelector(`.films-list__container--most-commented`);
 
 const api = new API(END_POINT, AUTHORIZATION);
 const store = new Store({key: CARDS_STORE_KEY, storage: localStorage});
 const provider = new Provider({api, store, cardId: generateId()});
+
+let showMoreComponent;
 
 provider.getCards()
   .then((cards) => {
     filmsListContainerElement.textContent = ``;
     const filmCardDataList = cards;
 
-    const filmsCards = new FilmCards(provider);
-    const filmCardNodeList = filmsCards.render(filmCardDataList);
-
-    filmsCards.onUserRank = () => {
+    const filmsCardsComponent = new FilmCards(provider);
+    const filmCardNodeList = filmsCardsComponent.render(filmCardDataList);
+    filmsCardsComponent.onUserRank = () => {
       document.querySelector(`.profile__rating`).textContent = setUserRank(filmCardDataList);
     };
 
-    const topRatedFilmDataList = _.cloneDeep(filmCardDataList);
-    topRatedFilmDataList.sort(compare(`averageRating`));
-    const topRatedFilmList = filmsCards.render(topRatedFilmDataList.slice(0, TOP_RATED_FILM_COUNT), false);
-
-    const mostCommentedFilmDataList = _.cloneDeep(filmCardDataList);
-    mostCommentedFilmDataList.sort(compare(`comments`));
-    const mostCommentedFilmList = filmsCards.render(mostCommentedFilmDataList.slice(0, MOST_COMMENTED_FILM_COUNT), false);
-
     addNodeListInContainer(filmCardNodeList.slice(0, INITIAL_FILM_COUNT), filmsListContainerElement);
     addShowMoreComponent(filmCardNodeList);
+    const topRatedFilmList = getTopRatedFilmList(_.cloneDeep(filmCardDataList), filmsCardsComponent);
     addNodeListInContainer(topRatedFilmList, topRatedContainerElement);
+    const mostCommentedFilmList = getMostCommentedFilmList(_.cloneDeep(filmCardDataList), filmsCardsComponent);
     addNodeListInContainer(mostCommentedFilmList, mostCommentedContainerElement);
 
-
-    const filters = new Filters(filmCardDataList);
-    filters.onFilter = () => {
-      filmsCommonContainerElement.classList.remove(`visually-hidden`);
-      statisticComponent.element.classList.add(`visually-hidden`);
-      clearContainer(filmsListContainerElement, `.film-card`);
-      const filteredDataList = filters.filterFilmCards;
-      const filteredCards = filmsCards.render(filteredDataList);
-      addNodeListInContainer(filteredCards.slice(0, INITIAL_FILM_COUNT), filmsListContainerElement);
-      addShowMoreComponent(filteredCards);
-    };
-    filters.render();
-
-    const searchComponent = new Search();
-    searchComponent.onSearch = (value) => {
-      const filteredDataList = filmCardDataList.filter((currentCard) => {
-        return currentCard.title.toLowerCase().includes(value);
-      });
-      const filteredCardNodeList = filmsCards.render(filteredDataList);
-      filmsListContainerElement.textContent = ``;
-      addNodeListInContainer(filteredCardNodeList.slice(0, INITIAL_FILM_COUNT), filmsListContainerElement);
-      addShowMoreComponent(filteredCardNodeList);
-    };
-    document.querySelector(`.search`).appendChild(searchComponent.render());
-
-    document.querySelector(`.profile__rating`).textContent = setUserRank(filmCardDataList);
-
-    const statisticComponent = new Statistic(filmCardDataList);
-    statisticComponent.calculateUserRank(filmCardDataList);
-    statisticComponent.countSimilarGenres();
-    statisticComponent.getStatistic();
-    document.querySelector(`main`).appendChild(statisticComponent.render());
+    addSearchComponent(filmCardDataList, filmsCardsComponent, filmsListContainerElement);
+    addUserRank(filmCardDataList);
+    addFooterStatistic(filmCardDataList);
+    const statisticComponent = addStatisticComponent(filmCardDataList);
+    addFiltersComponent(filmCardDataList, statisticComponent, filmsCardsComponent);
   })
   .catch((error) => {
     // eslint-disable-next-line

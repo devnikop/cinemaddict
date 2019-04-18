@@ -1,4 +1,3 @@
-import {createElement} from './util';
 import Component from './component';
 
 export default class FilmComponent extends Component {
@@ -38,22 +37,4 @@ export default class FilmComponent extends Component {
   get element() {
     return this._element;
   }
-
-  bind() {}
-
-  unbind() {}
-
-  render() {
-    this._element = createElement(this.template);
-    this.bind();
-    return this._element;
-  }
-
-  unrender() {
-    this.unbind();
-    this._element.remove();
-    this._element = null;
-  }
-
-  update() {}
 }

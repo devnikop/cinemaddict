@@ -250,7 +250,7 @@ export default class FilmDetails extends FilmComponent {
 
     window.addEventListener(`keydown`, this._onEscapeClick);
     this._closeButtonElement.addEventListener(`click`, this._onCloseButtonClick);
-    this._commentElement.addEventListener(`keydown`, this._onCommentEnter);
+    this._commentElement.addEventListener(`keyup`, this._onCommentEnter);
     this._userRatingContainerElement.addEventListener(`click`, this._onUserRatingClick);
     this._addToWatchlistElement.addEventListener(`click`, this._onAddToWatchListClick);
     this._markAsWatchedElement.addEventListener(`click`, this._onMarkAsWatchedClick);
@@ -261,7 +261,7 @@ export default class FilmDetails extends FilmComponent {
   unbind() {
     window.removeEventListener(`keydown`, this._onEscapeClick);
     this._closeButtonElement.removeEventListener(`click`, this._onCloseButtonClick);
-    this._commentElement.removeEventListener(`keydown`, this._onCommentEnter);
+    this._commentElement.removeEventListener(`keyup`, this._onCommentEnter);
     this._userRatingContainerElement.removeEventListener(`click`, this._onUserRatingClick);
     this._addToWatchlistElement.removeEventListener(`click`, this._onAddToWatchListClick);
     this._markAsWatchedElement.removeEventListener(`click`, this._onMarkAsWatchedClick);
@@ -295,7 +295,7 @@ export default class FilmDetails extends FilmComponent {
   }
 
   _onCommentEnter(evt) {
-    if (evt.key === `Enter`) {
+    if (evt.ctrlKey && evt.key === `Enter`) {
       evt.preventDefault();
       this.update(FilmDetails.processNewData(this._newData));
       if (typeof this._onComment === `function`) {
