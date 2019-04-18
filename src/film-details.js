@@ -205,6 +205,7 @@ export default class FilmDetails extends FilmComponent {
     return {
       comments: this._comments,
       userRating: this._userRating,
+      watchingDate: this._watchingDate,
       isOnWatchlist: this._state._isOnWatchlist,
       isWatched: this._state._isWatched,
       isFavorite: this._state._isFavorite,
@@ -325,7 +326,7 @@ export default class FilmDetails extends FilmComponent {
     if (typeof this._onMarkAsWatched === `function`) {
       this._state._isWatched = !this._state._isWatched;
       if (this._state._isWatched) {
-        // this._watchingDate = +moment();
+        this._watchingDate = +moment();
       }
       this._onMarkAsWatched(this._currentData);
     }
@@ -348,18 +349,13 @@ export default class FilmDetails extends FilmComponent {
   static processNewData(newData) {
     const entry = {
       comments: {
-        author: ``,
-        comment: ``,
-        date: new Date(),
+        author: newData.author,
+        comment: newData.comment,
+        date: newData.date,
         emotion: ``,
       },
-      userRating: ``,
+      userRating: newData.userRating,
     };
-
-    entry.comments.comment = newData.comment;
-    entry.comments.author = newData.author;
-    entry.comments.date = newData.date;
-    entry.userRating = newData.userRating;
     return entry;
   }
 }
