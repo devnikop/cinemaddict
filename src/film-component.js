@@ -3,7 +3,7 @@ import Component from './component';
 export default class FilmComponent extends Component {
   constructor(film) {
     if (new.target === Component) {
-      throw new Error(`Can't instantiate Component, only concrete one.`);
+      throw new Error(`Can't instantiate FilmComponent, only concrete one.`);
     }
 
     super();
@@ -21,6 +21,13 @@ export default class FilmComponent extends Component {
     this._commentsCount = this._comments.length;
     this._watchingDate = film.watchingDate;
 
+    this._ageLimit = film.ageLimit;
+    this._userRating = film.userRating;
+    this._country = film.country;
+    this._actorCast = film.actorCast;
+    this._director = film.director;
+    this._writers = film.writers;
+
     this._state = {
       _isOnWatchlist: film.isOnWatchlist,
       _isWatched: film.isWatched,
@@ -28,13 +35,5 @@ export default class FilmComponent extends Component {
     };
 
     this._element = null;
-  }
-
-  get template() {
-    throw new Error(`You have to define template.`);
-  }
-
-  get element() {
-    return this._element;
   }
 }

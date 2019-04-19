@@ -5,20 +5,21 @@ const ACTOR_COUNT = 3;
 const WRITERS_COUNT = 3;
 const GENRE_COUNT = 3;
 
-export default class FilmDetails extends FilmComponent {
-  constructor(film, hasControls = false) {
-    super(film);
-    this._ageLimit = film.ageLimit;
-    this._userRating = film.userRating;
-    this._country = film.country;
-    this._actorCast = film.actorCast;
-    this._director = film.director;
-    this._writers = film.writers;
+const EmotionMap = new Map([
+  [`sleeping`, `😴`],
+  [`neutral-face`, `😐`],
+  [`grinning`, `😀`],
+]);
 
-    this._cardControls = hasControls;
+export default class FilmDetails extends FilmComponent {
+  constructor(film) {
+    super(film);
+
+    this._currentEmotion = null;
 
     this._closeButtonElement = null;
     this._commentElement = null;
+    this._emojiContainerElement = null;
     this._userRatingContainerElement = null;
     this._addToWatchlistElement = null;
     this._markAsWatchedElement = null;
@@ -28,6 +29,7 @@ export default class FilmDetails extends FilmComponent {
     this._onEscapeClick = this._onEscapeClick.bind(this);
     this._onCloseButtonClick = this._onCloseButtonClick.bind(this);
     this._onCommentEnter = this._onCommentEnter.bind(this);
+    this._onEmojiClick = this._onEmojiClick.bind(this);
     this._onUserRatingClick = this._onUserRatingClick.bind(this);
     this._onAddToWatchListClick = this._onAddToWatchListClick.bind(this);
     this._onMarkAsWatchedClick = this._onMarkAsWatchedClick.bind(this);
@@ -126,7 +128,7 @@ export default class FilmDetails extends FilmComponent {
           <ul class="film-details__comments-list">
             ${this._comments.map((currentComment) => `
               <li class="film-details__comment">
-                <span class="film-details__comment-emoji">😴</span>
+                <span class="film-details__comment-emoji">${EmotionMap.get(currentComment.emotion)}</span>
                 <div>
                   <p class="film-details__comment-text">${currentComment.comment}</p>
                   <p class="film-details__comment-info">
@@ -196,7 +198,7 @@ export default class FilmDetails extends FilmComponent {
       author: `new author`,
       comment: this.element.querySelector(`.film-details__comment-input`).value,
       date: +moment(),
-      emotion: `sleeping`,
+      emotion: this._currentEmotion,
       userRating: this.element.querySelector(`.film-details__user-rating-input:checked`).value,
     };
   }
@@ -243,6 +245,7 @@ export default class FilmDetails extends FilmComponent {
   bind() {
     this._closeButtonElement = this.element.querySelector(`.film-details__close-btn`);
     this._commentElement = this.element.querySelector(`.film-details__comment-input`);
+    this._emojiContainerElement = this.element.querySelector(`.film-details__emoji-list`);
     this._userRatingContainerElement = this.element.querySelector(`.film-details__user-rating-score`);
     this._addToWatchlistElement = this.element.querySelector(`.film-details__control-label--watchlist`);
     this._markAsWatchedElement = this.element.querySelector(`.film-details__control-label--watched`);
@@ -252,6 +255,7 @@ export default class FilmDetails extends FilmComponent {
     window.addEventListener(`keydown`, this._onEscapeClick);
     this._closeButtonElement.addEventListener(`click`, this._onCloseButtonClick);
     this._commentElement.addEventListener(`keyup`, this._onCommentEnter);
+    this._emojiContainerElement.addEventListener(`change`, this._onEmojiClick);
     this._userRatingContainerElement.addEventListener(`click`, this._onUserRatingClick);
     this._addToWatchlistElement.addEventListener(`click`, this._onAddToWatchListClick);
     this._markAsWatchedElement.addEventListener(`click`, this._onMarkAsWatchedClick);
@@ -263,6 +267,7 @@ export default class FilmDetails extends FilmComponent {
     window.removeEventListener(`keydown`, this._onEscapeClick);
     this._closeButtonElement.removeEventListener(`click`, this._onCloseButtonClick);
     this._commentElement.removeEventListener(`keyup`, this._onCommentEnter);
+    this._emojiContainerElement.removeEventListener(`change`, this._onEmojiClick);
     this._userRatingContainerElement.removeEventListener(`click`, this._onUserRatingClick);
     this._addToWatchlistElement.removeEventListener(`click`, this._onAddToWatchListClick);
     this._markAsWatchedElement.removeEventListener(`click`, this._onMarkAsWatchedClick);
@@ -302,6 +307,15 @@ export default class FilmDetails extends FilmComponent {
       if (typeof this._onComment === `function`) {
         this._onComment(this._currentData);
       }
+    }
+  }
+
+  _onEmojiClick(evt) {
+    if ([...EmotionMap.keys()].includes(evt.target.value)) {
+      this._currentEmotion = evt.target.value;
+      const currentEmoji = EmotionMap.get(evt.target.value);
+      this.element.querySelector(`.film-details__add-emoji-label`).textContent = currentEmoji;
+      this.element.querySelector(`.film-details__add-emoji`).checked = false;
     }
   }
 
@@ -352,7 +366,7 @@ export default class FilmDetails extends FilmComponent {
         author: newData.author,
         comment: newData.comment,
         date: newData.date,
-        emotion: ``,
+        emotion: newData.emotion,
       },
       userRating: newData.userRating,
     };

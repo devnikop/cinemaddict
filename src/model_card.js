@@ -22,7 +22,7 @@ export default class ModelCard {
         author: comment.author,
         comment: comment.comment,
         date: comment.date,
-        emotion: comment.emotion,
+        emotion: comment.emotion ? comment.emotion : `neutral-face`,
       };
     }));
     this.comments = this.comments[0];
