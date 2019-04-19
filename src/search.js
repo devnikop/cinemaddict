@@ -1,6 +1,6 @@
 import Component from "./component";
 
-export class Search extends Component {
+export default class Search extends Component {
   constructor() {
     super();
 

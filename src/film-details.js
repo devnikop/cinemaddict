@@ -4,6 +4,7 @@ import moment from '../node_modules/moment';
 const ACTOR_COUNT = 3;
 const WRITERS_COUNT = 3;
 const GENRE_COUNT = 3;
+const RATING_SCORE_MAX = 9;
 
 const EmotionMap = new Map([
   [`sleeping`, `😴`],
@@ -179,7 +180,7 @@ export default class FilmDetails extends FilmComponent {
               <p class="film-details__user-rating-feelings">How you feel it?</p>
 
               <div class="film-details__user-rating-score">
-                ${Array(9).fill().map((item, i) => `
+                ${Array(RATING_SCORE_MAX).fill().map((item, i) => `
                   <input type="radio" name="score" class="film-details__user-rating-input visually-hidden"
                     value="${i + 1}" id="rating-${i + 1}" ${+this._userRating === i + 1 ? `checked` : ``}>
                   <label class="film-details__user-rating-label" for="rating-${i + 1}">${i + 1}</label>
@@ -198,7 +199,7 @@ export default class FilmDetails extends FilmComponent {
       author: `new author`,
       comment: this.element.querySelector(`.film-details__comment-input`).value,
       date: +moment(),
-      emotion: this._currentEmotion,
+      emotion: this._currentEmotion ? this._currentEmotion : `neutral-face`,
       userRating: this.element.querySelector(`.film-details__user-rating-input:checked`).value,
     };
   }
@@ -242,6 +243,12 @@ export default class FilmDetails extends FilmComponent {
     this._onCommentReset = cb;
   }
 
+  _onPopupClose() {
+    if (typeof this._onClose === `function`) {
+      this._onClose(this._currentData);
+    }
+  }
+
   bind() {
     this._closeButtonElement = this.element.querySelector(`.film-details__close-btn`);
     this._commentElement = this.element.querySelector(`.film-details__comment-input`);
@@ -281,12 +288,6 @@ export default class FilmDetails extends FilmComponent {
     }
     this._commentsCount = this._comments.length;
     this._userRating = newObject.userRating;
-  }
-
-  _onPopupClose() {
-    if (typeof this._onClose === `function`) {
-      this._onClose(this._currentData);
-    }
   }
 
   _onEscapeClick(evt) {

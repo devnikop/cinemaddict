@@ -1,4 +1,4 @@
-export class Store {
+export default class Store {
   constructor({key, storage}) {
     this._storeKey = key;
     this._storage = storage;

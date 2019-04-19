@@ -50,7 +50,7 @@ export default class Filters {
 
   render() {
     const mainNavigationContainerElement = document.querySelector(`.main-navigation`);
-    let tempFilterContainer = document.createDocumentFragment();
+    const tempFilterContainer = document.createDocumentFragment();
     [...FilterMap.keys()].forEach((filterName) => {
       this._action = FilterMap.get(filterName);
       const filteredCardCount = this._action !== FilterMap.get(`All movies`) ? this[this._action].length : 0;

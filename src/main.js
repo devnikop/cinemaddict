@@ -1,10 +1,10 @@
 import API from './api';
-import {Provider} from './provider';
-import {Store} from './store';
+import Provider from './provider';
+import Store from './store';
 import FilmCards from './film-cards';
 import Filters from './filters';
-import {Search} from './search';
-import {ShowMore} from './show-more';
+import Search from './search';
+import ShowMore from './show-more';
 import Statistic from './statistic';
 import {addNodeListInContainer, compare, setUserRank} from './util';
 import _ from '../node_modules/lodash';

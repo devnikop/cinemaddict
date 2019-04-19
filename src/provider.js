@@ -1,7 +1,7 @@
 import {objectToArray} from "./util";
 import ModelCard from "./model_card";
 
-export class Provider {
+export default class Provider {
   constructor({api, store, cardId}) {
     this._api = api;
     this._store = store;
@@ -10,7 +10,7 @@ export class Provider {
   }
 
   createCard({card}) {
-    if (this._isOnline()) {
+    if (Provider.isOnline()) {
       return this._api.createCard({card})
       .then((currentCard) => {
         this._store.setItem({key: currentCard.id, item: currentCard.toRAW()});
@@ -26,7 +26,7 @@ export class Provider {
   }
 
   getCards() {
-    if (this._isOnline()) {
+    if (Provider.isOnline()) {
       return this._api.getCards()
       .then((cards) => {
         cards.map((it) => this._store.setItem({key: it.id, item: it.toRAW()}));
@@ -42,7 +42,7 @@ export class Provider {
   }
 
   updateCard({id, data}) {
-    if (this._isOnline()) {
+    if (Provider.isOnline()) {
       return this._api.updateCard({id, data})
       .then((card) => {
         this._store.setItem({key: card.id, item: card.toRAW()});
@@ -57,7 +57,7 @@ export class Provider {
   }
 
   deleteCard({id}) {
-    if (this._isOnline()) {
+    if (Provider.isOnline()) {
       return this._api.deleteCard({id})
       .then(() => {
         this._store.removeItem({key: id});
@@ -73,7 +73,7 @@ export class Provider {
     return this._api.syncCards({cards: objectToArray(this._store.getAll())});
   }
 
-  _isOnline() {
+  static isOnline() {
     return window.navigator.onLine;
   }
 }

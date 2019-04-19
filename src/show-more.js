@@ -1,6 +1,6 @@
 import Component from "./component";
 
-export class ShowMore extends Component {
+export default class ShowMore extends Component {
   constructor() {
     super();
 
