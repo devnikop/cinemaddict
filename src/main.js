@@ -132,9 +132,7 @@ provider.getCards()
     const statisticComponent = addStatisticComponent(filmCardDataList);
     addFiltersComponent(filmCardDataList, statisticComponent, filmsCardsComponent);
   })
-  .catch((error) => {
-    // eslint-disable-next-line
-    console.error(`fetch error: ${error}`);
+  .catch(() => {
     filmsListContainerElement.textContent = `Something went wrong while loading movies. Check your connection or try again later`;
   });
 
