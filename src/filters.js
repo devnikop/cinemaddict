@@ -1,5 +1,11 @@
 import Filter from './filter';
-import {FilterMap} from './util';
+
+export const FilterMap = new Map([
+  [`All movies`, `_allList`],
+  [`Watchlist`, `_onWatchlist`],
+  [`History`, `_watched`],
+  [`Favorites`, `_favorites`],
+]);
 
 export default class Filters {
   constructor(filmCardDataList) {
