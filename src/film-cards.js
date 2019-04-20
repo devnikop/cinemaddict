@@ -75,7 +75,7 @@ export default class FilmCards {
   }
 
   _bindFilmDetailsHandlers(filmDetailsComponent, filmComponent, currentFilmCardData) {
-    const _updateDetails = ({newData, eventType = ``, action, newState}) => {
+    const _updateDetails = ({newData, eventType = ``, action}) => {
       Object.assign(currentFilmCardData, newData);
       this._api.updateCard({id: currentFilmCardData.id, data: currentFilmCardData.toRAW()})
         .then((newCard) => {
@@ -85,9 +85,6 @@ export default class FilmCards {
           const updatedCurrentData = Object.assign(currentFilmCardData, newCard);
           this._onUpdateContainer(action, newCard.id);
           filmComponent.update(_.cloneDeep(updatedCurrentData));
-          if (!newState) {
-            filmComponent = null;
-          }
         })
         .then(() => {
           if (eventType === `onCommentEnter`) {
@@ -105,10 +102,12 @@ export default class FilmCards {
 
     filmDetailsComponent.onClose = () => {
       filmDetailsComponent.unrender();
-      if (filmComponent) {
+      const filmsContainerElement = document.querySelector(`.films-list__container`);
+
+      if (filmsContainerElement.contains(filmComponent.element)) {
         filmComponent.update(_.cloneDeep(currentFilmCardData));
         const currentFilmCard = filmComponent.element;
-        document.querySelector(`.films-list__container`).replaceChild(filmComponent.render(), currentFilmCard);
+        filmsContainerElement.replaceChild(filmComponent.render(), currentFilmCard);
       }
     };
 
@@ -124,14 +123,14 @@ export default class FilmCards {
 
     filmDetailsComponent.onAddToWatchList = (newData) => {
       this._blockForm(filmDetailsComponent);
-      Promise.resolve(_updateDetails({newData, action: `Watchlist`, newState: newData.isOnWatchlist}))
+      Promise.resolve(_updateDetails({newData, action: `Watchlist`}))
       .then(() => this._updateFilters());
 
     };
 
     filmDetailsComponent.onMarkAsWatched = (newData) => {
       this._blockForm(filmDetailsComponent);
-      Promise.resolve(_updateDetails({newData, action: `History`, newState: newData.isWatched}))
+      Promise.resolve(_updateDetails({newData, action: `History`}))
       .then(() => this._updateFilters());
       if (typeof this._onUserRank === `function`) {
         this._onUserRank();
@@ -140,7 +139,7 @@ export default class FilmCards {
 
     filmDetailsComponent.onAddToFavorite = (newData) => {
       this._blockForm(filmDetailsComponent);
-      Promise.resolve(_updateDetails({newData, action: `Favorites`, newState: newData.isFavorite}))
+      Promise.resolve(_updateDetails({newData, action: `Favorites`}))
       .then(() => this._updateFilters());
     };
 

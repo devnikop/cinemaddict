@@ -70,11 +70,11 @@ export default class API {
     });
   }
 
-  syncCards(cards) {
+  syncCards(object) {
     return this._load({
       url: `movies/sync`,
       method: Method.POST,
-      body: JSON.stringify(cards),
+      body: JSON.stringify(object.cards),
       headers: new Headers({'Content-Type': `application/json`})
     })
     .then(toJSON);
