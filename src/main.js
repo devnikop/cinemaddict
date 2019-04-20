@@ -161,9 +161,7 @@ provider.getCards()
     addUserRank(filmCardDataList);
     addFooterStatistic(filmCardDataList);
   })
-  .catch((error) => {
-    // eslint-disable-next-line
-    console.error(`fetch error: ${error}`);
+  .catch(() => {
     filmsListContainerElement.textContent = `Something went wrong while loading movies. Check your connection or try again later`;
   });
 

@@ -57,8 +57,6 @@ export default class API {
       .then(toJSON)
       .then(ModelCard.parseCard)
       .catch((error) => {
-        // eslint-disable-next-line
-        console.error(`fetch error: ${error}`);
         throw error;
       });
   }
@@ -86,8 +84,6 @@ export default class API {
     return fetch(`${this._endPoint}/${url}`, {method, body, headers})
       .then(checkStatus)
       .catch((error) => {
-        // eslint-disable-next-line
-        console.error(`fetch error: ${error}`);
         throw error;
       });
   }
