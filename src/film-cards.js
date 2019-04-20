@@ -7,6 +7,8 @@ export default class FilmCards {
     this._api = api;
 
     this._onUserRank = null;
+    this._onState = null;
+    this._onUpdateContainer = null;
 
     this._watchlistLabelElement = ``;
     this._watchedLabelElement = ``;
@@ -18,6 +20,20 @@ export default class FilmCards {
 
   set onUserRank(cb) {
     this._onUserRank = cb;
+  }
+
+  set onState(cb) {
+    this._onState = cb;
+  }
+
+  set onUpdateContainer(cb) {
+    this._onUpdateContainer = cb;
+  }
+
+  _updateFilters() {
+    if (typeof this._onState === `function`) {
+      this._onState();
+    }
   }
 
   _blockForm(filmDetailsComponent) {
@@ -59,7 +75,7 @@ export default class FilmCards {
   }
 
   _bindFilmDetailsHandlers(filmDetailsComponent, filmComponent, currentFilmCardData) {
-    const _updateDetails = (newData, eventType = ``) => {
+    const _updateDetails = ({newData, eventType = ``, action, newState}) => {
       Object.assign(currentFilmCardData, newData);
       this._api.updateCard({id: currentFilmCardData.id, data: currentFilmCardData.toRAW()})
         .then((newCard) => {
@@ -67,7 +83,11 @@ export default class FilmCards {
           filmDetailsComponent.update(currentFilmCardData);
           document.body.replaceChild(filmDetailsComponent.render(), currentFilmDetails);
           const updatedCurrentData = Object.assign(currentFilmCardData, newCard);
+          this._onUpdateContainer(action, newCard.id);
           filmComponent.update(_.cloneDeep(updatedCurrentData));
+          if (!newState) {
+            filmComponent = null;
+          }
         })
         .then(() => {
           if (eventType === `onCommentEnter`) {
@@ -85,29 +105,34 @@ export default class FilmCards {
 
     filmDetailsComponent.onClose = () => {
       filmDetailsComponent.unrender();
-      filmComponent.update(_.cloneDeep(currentFilmCardData));
-      const currentFilmCard = filmComponent.element;
-      document.querySelector(`.films-list__container`).replaceChild(filmComponent.render(), currentFilmCard);
+      if (filmComponent) {
+        filmComponent.update(_.cloneDeep(currentFilmCardData));
+        const currentFilmCard = filmComponent.element;
+        document.querySelector(`.films-list__container`).replaceChild(filmComponent.render(), currentFilmCard);
+      }
     };
 
     filmDetailsComponent.onCommentEnter = (newData) => {
       this._blockForm(filmDetailsComponent);
-      _updateDetails(newData, `onCommentEnter`);
+      _updateDetails({newData, eventType: `onCommentEnter`});
     };
 
     filmDetailsComponent.onUserRatingClick = (newData) => {
       this._blockForm(filmDetailsComponent);
-      _updateDetails(newData);
+      _updateDetails({newData});
     };
 
     filmDetailsComponent.onAddToWatchList = (newData) => {
       this._blockForm(filmDetailsComponent);
-      _updateDetails(newData);
+      Promise.resolve(_updateDetails({newData, action: `Watchlist`, newState: newData.isOnWatchlist}))
+      .then(() => this._updateFilters());
+
     };
 
     filmDetailsComponent.onMarkAsWatched = (newData) => {
       this._blockForm(filmDetailsComponent);
-      _updateDetails(newData);
+      Promise.resolve(_updateDetails({newData, action: `History`, newState: newData.isWatched}))
+      .then(() => this._updateFilters());
       if (typeof this._onUserRank === `function`) {
         this._onUserRank();
       }
@@ -115,41 +140,44 @@ export default class FilmCards {
 
     filmDetailsComponent.onAddToFavorite = (newData) => {
       this._blockForm(filmDetailsComponent);
-      _updateDetails(newData);
+      Promise.resolve(_updateDetails({newData, action: `Favorites`, newState: newData.isFavorite}))
+      .then(() => this._updateFilters());
     };
 
     filmDetailsComponent.onCommentReset = () => {
       this._blockForm(filmDetailsComponent);
       currentFilmCardData.comments.pop();
-      _updateDetails(currentFilmCardData, `onCommentReset`);
+      _updateDetails({currentFilmCardData, eventType: `onCommentReset`});
     };
   }
 
   _bindFilmCardHandlers(filmComponent, currentFilmCardData) {
-    const _updateData = () => {
+    const _updateData = (action) => {
       this._api.updateCard({id: currentFilmCardData.id, data: currentFilmCardData.toRAW()})
         .then((newCard) => {
+          this._onUpdateContainer(action, newCard.id);
           const updatedCurrentData = Object.assign(currentFilmCardData, newCard);
-          const currentFilmCard = filmComponent.element;
           filmComponent.update(_.cloneDeep(updatedCurrentData));
-          document.querySelector(`.films-list__container`).replaceChild(filmComponent.render(), currentFilmCard);
         });
     };
 
     filmComponent.onAddToWatchList = (newState) => {
       currentFilmCardData.isOnWatchlist = newState;
-      _updateData();
+      Promise.resolve(_updateData(`Watchlist`))
+      .then(() => this._updateFilters());
     };
     filmComponent.onMarkAsWatched = (newState) => {
       currentFilmCardData.isWatched = newState;
-      _updateData();
+      Promise.resolve(_updateData(`History`))
+      .then(() => this._updateFilters());
       if (typeof this._onUserRank === `function`) {
         this._onUserRank();
       }
     };
     filmComponent.onAddToFavorite = (newState) => {
       currentFilmCardData.isFavorite = newState;
-      _updateData();
+      Promise.resolve(_updateData(`Favorites`))
+      .then(() => this._updateFilters());
     };
   }
 

@@ -10,7 +10,7 @@ import {addNodeListInContainer, compare, setUserRank} from './util';
 import _ from '../node_modules/lodash';
 
 const END_POINT = ` https://es8-demo-srv.appspot.com/moowle`;
-const AUTHORIZATION = `Basic dXNlckBwYXNzd29rZAo15`;
+const AUTHORIZATION = `Basic dXNlckBwYXNzd29rZAo153bsdfg7c`;
 const CARDS_STORE_KEY = `cards-store-key`;
 const TOP_RATED_FILM_COUNT = 2;
 const MOST_COMMENTED_FILM_COUNT = 2;
@@ -51,6 +51,26 @@ const addShowMoreComponent = (nodeList) => {
   }
 };
 
+const bindFilmCardsHandlers = (filmsCardsComponent, statisticComponent, filmCardDataList) => {
+  filmsCardsComponent.onUserRank = () => {
+    document.querySelector(`.profile__rating`).textContent = setUserRank(filmCardDataList);
+  };
+
+  filmsCardsComponent.onState = () => {
+    addFiltersComponent(filmCardDataList, statisticComponent, filmsCardsComponent);
+  };
+
+  filmsCardsComponent.onUpdateContainer = (currentAction, currentId) => {
+    if (activeFilter === currentAction) {
+      filmsListContainerElement.textContent = ``;
+      updatedDataList = updatedDataList.filter((currentNode) => currentNode.id !== currentId);
+      const updatedCardNodeList = filmsCardsComponent.render(updatedDataList);
+      addNodeListInContainer(updatedCardNodeList.slice(0, INITIAL_FILM_COUNT), filmsListContainerElement);
+      addShowMoreComponent(updatedCardNodeList);
+    }
+  };
+};
+
 const addSearchComponent = (filmCardDataList, filmsCardsComponent, filmsListContainerElement) => {
   const searchComponent = new Search();
   searchComponent.onSearch = (value) => {
@@ -83,17 +103,23 @@ const addStatisticComponent = (filmCardDataList) => {
 };
 
 const addFiltersComponent = (filmCardDataList, statisticComponent, filmsCardsComponent) => {
-  const filters = new Filters(filmCardDataList);
-  filters.onFilter = () => {
+  if (typeof filtersComponent !== `undefined`) {
+    filtersComponent.unrender();
+    filtersComponent = undefined;
+  }
+  filtersComponent = new Filters(filmCardDataList);
+  filtersComponent.onFilter = () => {
     filmsContainerElement.classList.remove(`visually-hidden`);
     statisticComponent.element.classList.add(`visually-hidden`);
     filmsListContainerElement.textContent = ``;
-    const filteredDataList = filters.filterFilmCards;
+    const filteredDataList = filtersComponent.filterFilmCards;
+    updatedDataList = filteredDataList;
+    activeFilter = filtersComponent.currentFilter;
     const filteredCards = filmsCardsComponent.render(filteredDataList);
     addNodeListInContainer(filteredCards.slice(0, INITIAL_FILM_COUNT), filmsListContainerElement);
     addShowMoreComponent(filteredCards);
   };
-  filters.render();
+  filtersComponent.render();
 };
 
 const filmsContainerElement = document.querySelector(`.films`);
@@ -107,17 +133,22 @@ const store = new Store({key: CARDS_STORE_KEY, storage: localStorage});
 const provider = new Provider({api, store, cardId: generateId()});
 
 let showMoreComponent;
+let filtersComponent;
+let activeFilter;
+let updatedDataList;
 
 provider.getCards()
   .then((cards) => {
     filmsListContainerElement.textContent = ``;
     const filmCardDataList = cards;
 
+    const statisticComponent = addStatisticComponent(filmCardDataList);
+
     const filmsCardsComponent = new FilmCards(provider);
     const filmCardNodeList = filmsCardsComponent.render(filmCardDataList);
-    filmsCardsComponent.onUserRank = () => {
-      document.querySelector(`.profile__rating`).textContent = setUserRank(filmCardDataList);
-    };
+    bindFilmCardsHandlers(filmsCardsComponent, statisticComponent, filmCardDataList);
+
+    addFiltersComponent(filmCardDataList, statisticComponent, filmsCardsComponent);
 
     addNodeListInContainer(filmCardNodeList.slice(0, INITIAL_FILM_COUNT), filmsListContainerElement);
     addShowMoreComponent(filmCardNodeList);
@@ -129,8 +160,6 @@ provider.getCards()
     addSearchComponent(filmCardDataList, filmsCardsComponent, filmsListContainerElement);
     addUserRank(filmCardDataList);
     addFooterStatistic(filmCardDataList);
-    const statisticComponent = addStatisticComponent(filmCardDataList);
-    addFiltersComponent(filmCardDataList, statisticComponent, filmsCardsComponent);
   })
   .catch((error) => {
     // eslint-disable-next-line

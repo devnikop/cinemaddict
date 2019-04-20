@@ -1,15 +1,12 @@
 import Filter from './filter';
-
-const FilterMap = new Map([
-  [`All movies`, `_allList`],
-  [`Watchlist`, `_onWatchlist`],
-  [`History`, `_watched`],
-  [`Favorites`, `_favorites`],
-]);
+import {FilterMap} from './util';
 
 export default class Filters {
   constructor(filmCardDataList) {
     this._data = filmCardDataList;
+
+    this._filterComponent = [];
+    this._currentFilter = null;
 
     this._onFilter = null;
     this._action = null;
@@ -17,6 +14,10 @@ export default class Filters {
 
   get filterFilmCards() {
     return this[this._action];
+  }
+
+  get currentFilter() {
+    return this._currentFilter;
   }
 
   get _allList() {
@@ -41,7 +42,8 @@ export default class Filters {
 
   _bindHandlers(filterComponent) {
     filterComponent.onFilter = (filter) => {
-      this._action = FilterMap.get(filter);
+      this._currentFilter = filter;
+      this._action = FilterMap.get(this._currentFilter);
       if (typeof this._onFilter === `function`) {
         this._onFilter();
       }
@@ -55,10 +57,15 @@ export default class Filters {
       this._action = FilterMap.get(filterName);
       const filteredCardCount = this._action !== FilterMap.get(`All movies`) ? this[this._action].length : 0;
       const filterComponent = new Filter(filterName, filteredCardCount);
+      this._filterComponent.push(filterComponent);
       this._bindHandlers(filterComponent);
       tempFilterContainer.appendChild(filterComponent.render());
     });
 
     mainNavigationContainerElement.insertBefore(tempFilterContainer, mainNavigationContainerElement.firstChild);
+  }
+
+  unrender() {
+    this._filterComponent.forEach((currentFilter) => currentFilter.unrender());
   }
 }

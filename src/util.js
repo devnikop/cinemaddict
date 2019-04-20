@@ -1,3 +1,16 @@
+export const FilterMap = new Map([
+  [`All movies`, `_allList`],
+  [`Watchlist`, `_onWatchlist`],
+  [`History`, `_watched`],
+  [`Favorites`, `_favorites`],
+]);
+
+export const SecondaryFilterMap = () => {
+  const FilterMapCopy = FilterMap;
+  FilterMapCopy.delete(`All movies`);
+  return FilterMapCopy;
+};
+
 const Rank = {
   'NOVICE': {
     'MIN': 1,
