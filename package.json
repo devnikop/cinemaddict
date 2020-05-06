@@ -14,7 +14,7 @@
     "chartjs-plugin-datalabels": "0.6.0",
     "eslint": "5.13.0",
     "eslint-config-htmlacademy": "0.5.2",
-    "lodash": "4.17.11",
+    "lodash": "4.17.13",
     "moment": "2.24.0",
     "webpack": "4.29.6",
     "webpack-cli": "3.2.3",
