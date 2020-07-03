@@ -1,5 +1,5 @@
 # Cinemaddict
-> Simple project to create a list of films for later viewing.
+> Study project to create a list of films for later viewing.
 
 ![Preview screenshot](./readme_assets/preview.jpg)
 
