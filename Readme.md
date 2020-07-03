@@ -28,8 +28,7 @@ To run this project, install it locally using npm:
 
 ### Prerequisites
 
-- Node.js v.12.13.1
-- Npm v.6.12.0
+- [Node.js](https://nodejs.org/en/download/) ^12.13.1
 
 ### Installing
 
