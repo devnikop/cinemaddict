@@ -19,7 +19,7 @@ This web application was created for mastering base js. It has no real use.
 
 ## Technologies
 
-* Vanilla js
+* [Vanilla js](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
 * [Webpack](https://webpack.js.org/)
 
 ## Setup
