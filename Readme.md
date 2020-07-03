@@ -20,6 +20,7 @@ This web application was created for mastering base js. It has no real use.
 ## Technologies
 
 * Vanilla js
+* Webpack
 
 ## Setup
 
